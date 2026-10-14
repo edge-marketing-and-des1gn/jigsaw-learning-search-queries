@@ -21,7 +21,7 @@
 ========================================================= */
 :root{
   color-scheme:light;
-  --page:#F8F8F8; --card:#FFFFFF; --line:#EBEDF0; --line-2:#F2F3F5; --track:#E4E4E7;
+  --page:#FFFFFF; --card:#FFFFFF; --line:#EBEDF0; --line-2:#F2F3F5; --track:#E4E4E7;
   --ink:#222A30; --ink-2:#55606A; --ink-3:#8A949C; --num:#555555; --bar:#171614;
   --blue:#5CBAE6; --lime:#B6D957; --amber:#FAC364; --sky:#8CD3FF; --clay:#D97757;
   --up:#2E8540; --down:#C0392B;
@@ -63,10 +63,8 @@ button{font:inherit;}
 
 /* widgets */
 .grid{display:grid; gap:12px; margin-bottom:12px;}
-.g4{grid-template-columns:repeat(4,minmax(0,1fr));}
-.g21{grid-template-columns:minmax(0,2fr) minmax(0,1fr);}
-.g3{grid-template-columns:repeat(3,minmax(0,1fr));}
-.g2{grid-template-columns:repeat(2,minmax(0,1fr));}
+.grid{grid-template-columns:var(--cols, minmax(0,1fr));}
+[hidden]{display:none !important;}
 .w{background:var(--card); border:0.8px solid var(--line); border-radius:var(--r); min-width:0; display:flex; flex-direction:column;}
 .wh{display:flex; align-items:center; gap:8px; padding:12px 16px 0; min-height:40px;}
 .wh .t{font-size:14px; font-weight:500; color:var(--ink); letter-spacing:.01em;}
@@ -149,13 +147,13 @@ button{font:inherit;}
 
 .banner{display:none; background:#FFF8E6; border:1px solid #F3E2B3; color:var(--ink); border-radius:var(--r); padding:10px 14px; font-size:13px; margin-bottom:12px;}
 .banner.on{display:block;}
-.loading{position:fixed; inset:0; background:rgba(248,248,248,.6); display:none; place-items:center; z-index:15;}
+.loading{position:fixed; inset:0; background:rgba(255,255,255,.6); display:none; place-items:center; z-index:15;}
 .loading.on{display:grid;}
 .spin{width:28px; height:28px; border:3px solid var(--track); border-top-color:var(--bar); border-radius:50%; animation:sp .8s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg);}}
 footer{text-align:center; font-size:11.5px; color:var(--ink-3); margin-top:4px;}
 
-@media (max-width:960px){ .g4{grid-template-columns:repeat(2,minmax(0,1fr));} .g21,.g3,.g2{grid-template-columns:1fr;} .priv{grid-template-columns:1fr;} }
+@media (max-width:960px){ .g4:not([data-n="1"]){grid-template-columns:repeat(2,minmax(0,1fr)) !important;} .g21,.g3,.g2{grid-template-columns:minmax(0,1fr) !important;} .priv{grid-template-columns:1fr;} }
 @media (max-width:480px){ .kpi .big{font-size:40px;} .menu{width:calc(100vw - 32px);} .hide-sm{display:none;} }
 @media print{ body{background:#fff;} .tools,.pager .pbtns{display:none;} .w{break-inside:avoid;} }
 </style>
@@ -165,7 +163,7 @@ footer{text-align:center; font-size:11.5px; color:var(--ink-3); margin-top:4px;}
 <div class="wrap">
   <div class="banner" id="banner"></div>
 
-  <header class="top">
+  <header class="top" data-w="header">
     <div class="brand">
       <svg class="gsc" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" fill="#4285F4"/><rect x="4" y="5" width="16" height="10" rx="1" fill="#fff"/><path d="M7 13l3-3 2 2 4-4" fill="none" stroke="#34A853" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="9" y="18" width="6" height="2" rx="1" fill="#FBBC04"/><rect x="7" y="20" width="10" height="1.6" rx=".8" fill="#EA4335"/></svg>
       <div>
@@ -186,23 +184,23 @@ footer{text-align:center; font-size:11.5px; color:var(--ink-3); margin-top:4px;}
 
   <!-- KPIs -->
   <section class="grid g4">
-    <div class="w kpi"><div class="wh"><span class="t">Clicks</span><span class="info" tabindex="0" data-tip="Visits to the site that came from someone clicking a Google search result.">i</span></div><div class="wb"><div class="big num" id="kClicks">–</div><div class="delta" id="dClicks"></div></div></div>
-    <div class="w kpi"><div class="wh"><span class="t">Impressions</span><span class="info" tabindex="0" data-tip="How many times the site appeared in someone's Google search results.">i</span></div><div class="wb"><div class="big num" id="kImpr">–</div><div class="delta" id="dImpr"></div></div></div>
-    <div class="w kpi"><div class="wh"><span class="t">CTR</span><span class="info" tabindex="0" data-tip="Click-through rate: out of every 100 times the site was shown, how many people clicked.">i</span></div><div class="wb"><div class="big num" id="kCtr">–</div><div class="delta" id="dCtr"></div></div></div>
-    <div class="w kpi"><div class="wh"><span class="t">Average Position</span><span class="info" tabindex="0" data-tip="Where the site usually ranked. 1 is the top result; 1 to 10 is the first page. Lower is better.">i</span></div><div class="wb"><div class="big num" id="kPos">–</div><div class="delta" id="dPos"></div></div></div>
+    <div class="w kpi" data-w="kpi_clicks"><div class="wh"><span class="t">Clicks</span><span class="info" tabindex="0" data-tip="Visits to the site that came from someone clicking a Google search result.">i</span></div><div class="wb"><div class="big num" id="kClicks">–</div><div class="delta" id="dClicks"></div></div></div>
+    <div class="w kpi" data-w="kpi_impressions"><div class="wh"><span class="t">Impressions</span><span class="info" tabindex="0" data-tip="How many times the site appeared in someone's Google search results.">i</span></div><div class="wb"><div class="big num" id="kImpr">–</div><div class="delta" id="dImpr"></div></div></div>
+    <div class="w kpi" data-w="kpi_ctr"><div class="wh"><span class="t">CTR</span><span class="info" tabindex="0" data-tip="Click-through rate: out of every 100 times the site was shown, how many people clicked.">i</span></div><div class="wb"><div class="big num" id="kCtr">–</div><div class="delta" id="dCtr"></div></div></div>
+    <div class="w kpi" data-w="kpi_position"><div class="wh"><span class="t">Average Position</span><span class="info" tabindex="0" data-tip="Where the site usually ranked. 1 is the top result; 1 to 10 is the first page. Lower is better.">i</span></div><div class="wb"><div class="big num" id="kPos">–</div><div class="delta" id="dPos"></div></div></div>
   </section>
 
-  <section class="w priv" id="priv" style="display:none;margin-bottom:12px"></section>
+  <section class="w priv" id="priv" data-w="privacy" style="display:none;margin-bottom:12px"></section>
 
   <!-- Trend + top queries -->
   <section class="grid g21">
-    <div class="w">
+    <div class="w" data-w="trend">
       <div class="wh"><span class="t" id="trendTitle">Clicks</span><span class="info" tabindex="0" data-tip="Day by day. Hover a day to see its numbers.">i</span>
         <div class="seg" id="metricSeg"><button type="button" class="on" data-m="1">Clicks</button><button type="button" data-m="2">Impressions</button></div>
         <span class="r num" id="trendTotal"></span></div>
       <div class="wb chart" id="trend"></div>
     </div>
-    <div class="w">
+    <div class="w" data-w="top_queries">
       <div class="wh"><span class="t">Top Queries</span><span class="info" tabindex="0" data-tip="The searches that brought the most clicks.">i</span><span class="r" style="font-weight:500;color:var(--ink-3);font-size:12.5px">Clicks</span></div>
       <div class="wb"><div class="bars" id="topQ"></div></div>
     </div>
@@ -210,15 +208,15 @@ footer{text-align:center; font-size:11.5px; color:var(--ink-3); margin-top:4px;}
 
   <!-- Donuts + countries -->
   <section class="grid g3">
-    <div class="w">
+    <div class="w" data-w="branded">
       <div class="wh"><span class="t">Branded vs Non-Branded</span><span class="info" tabindex="0" data-tip="Branded: the search included the business name. Non-branded: people searching for a topic who found the site. Counts only searches Google shows.">i</span></div>
       <div class="wb"><div class="donut" id="brandDonut"></div></div>
     </div>
-    <div class="w">
+    <div class="w" data-w="devices">
       <div class="wh"><span class="t">Devices</span><span class="info" tabindex="0" data-tip="Clicks by the device people searched on.">i</span></div>
       <div class="wb"><div class="donut" id="devDonut"></div></div>
     </div>
-    <div class="w">
+    <div class="w" data-w="countries">
       <div class="wh"><span class="t">Top Countries</span><span class="info" tabindex="0" data-tip="Where searchers were when they clicked.">i</span><span class="r" style="font-weight:500;color:var(--ink-3);font-size:12.5px">Clicks</span></div>
       <div class="wb"><div class="bars" id="countries"></div></div>
     </div>
@@ -226,11 +224,11 @@ footer{text-align:center; font-size:11.5px; color:var(--ink-3); margin-top:4px;}
 
   <!-- Opportunities -->
   <section class="grid g2">
-    <div class="w">
+    <div class="w" data-w="almost_top">
       <div class="wh"><span class="t">Almost on Top</span><span class="info" tabindex="0" data-tip="Searches where the site ranks 4 to 20, just below the top spots. Small improvements to these pages can bring many more clicks.">i</span></div>
       <div class="wb" style="padding-top:8px"><div class="tw"><table class="tbl" id="nearTbl"></table></div></div>
     </div>
-    <div class="w">
+    <div class="w" data-w="low_ctr">
       <div class="wh"><span class="t">Seen Often, Rarely Clicked</span><span class="info" tabindex="0" data-tip="Searches that showed the site many times but got few clicks. A clearer page title and description in Google usually helps.">i</span></div>
       <div class="wb" style="padding-top:8px"><div class="tw"><table class="tbl" id="lowTbl"></table></div></div>
     </div>
@@ -238,7 +236,7 @@ footer{text-align:center; font-size:11.5px; color:var(--ink-3); margin-top:4px;}
 
   <!-- Pages -->
   <section class="grid">
-    <div class="w">
+    <div class="w" data-w="landing_pages">
       <div class="wh"><span class="t">Top Landing Pages</span><span class="info" tabindex="0" data-tip="The pages Google sent searchers to.">i</span></div>
       <div class="wb" style="padding-top:8px"><div class="tw"><table class="tbl" id="pagesTbl"></table></div></div>
     </div>
@@ -246,7 +244,7 @@ footer{text-align:center; font-size:11.5px; color:var(--ink-3); margin-top:4px;}
 
   <!-- Everything -->
   <section class="grid">
-    <div class="w">
+    <div class="w" data-w="all_queries">
       <div class="wh"><span class="t">All Search Queries</span><span class="info" tabindex="0" data-tip="Every search Google reports for this period. Type to find a word, use a filter, or click a column to sort.">i</span><span class="r" style="font-weight:500;color:var(--ink-3);font-size:12.5px" id="allCount"></span></div>
       <div class="wb" style="padding:12px 0 0">
         <div class="tools">
@@ -393,11 +391,36 @@ function banner(h){ $('banner').innerHTML = h; $('banner').classList.add('on'); 
 function hideBanner(){ $('banner').classList.remove('on'); }
 
 /* =========================================================
+   WIDGETS — which ones show is chosen and published from the SEO tool.
+   No saved choice means everything shows. Rows close up around hidden
+   widgets so nothing leaves a gap.
+========================================================= */
+let publishedLayout = null, previewLayout = null;
+function applyLayout(){
+  const layout = previewLayout || publishedLayout;
+  const on = layout && Array.isArray(layout.widgets) ? new Set(layout.widgets) : null;
+  document.querySelectorAll('[data-w]').forEach(el => { el.hidden = on ? !on.has(el.dataset.w) : false; });
+  document.querySelectorAll('section.grid').forEach(sec => {
+    const vis = [...sec.children].filter(c => c.dataset.w && !c.hidden);
+    sec.hidden = vis.length === 0; sec.dataset.n = vis.length;
+    sec.style.setProperty('--cols', sec.classList.contains('g21') && vis.length === 2 ? 'minmax(0,2fr) minmax(0,1fr)' : 'repeat(' + Math.max(1, vis.length) + ',minmax(0,1fr))');
+  });
+}
+/* Live preview while ticking boxes in the SEO tool (only from the page embedding this one) */
+window.addEventListener('message', e => {
+  if (e.source !== window.parent || !e.data || e.data.type !== 'gsc-layout') return;
+  previewLayout = Array.isArray(e.data.widgets) ? { widgets: e.data.widgets } : null;
+  if (e.data.published) { publishedLayout = previewLayout; previewLayout = null; }
+  applyLayout();
+});
+
+/* =========================================================
    RENDER
 ========================================================= */
 let D = null, metric = 1;
 function render(d){
   D = d;
+  if ('layout' in d) publishedLayout = d.layout;
   const t = d.totals, pv = d.previous ? d.previous.totals : null;
   document.title = 'Organic Search Queries · ' + CONFIG.clientName;
   $('sub').textContent = CONFIG.clientName + ' · ' + d.range.label;
@@ -422,6 +445,7 @@ function render(d){
   opportunities(d.queries || [], t);
   pagesTable(d.pages || []);
   table.reset();
+  applyLayout();
 }
 
 function delta(id, cur, prev, lowerIsBetter, f){
