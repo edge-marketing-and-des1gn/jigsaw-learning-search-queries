@@ -70,6 +70,12 @@ h2{font-family:var(--display); font-size:21px; letter-spacing:-.01em;}
 button,.btn{font:inherit; font-size:13px; font-weight:600; border:1px solid var(--rule); background:var(--card); color:var(--ink); border-radius:10px; padding:8px 12px; cursor:pointer;}
 button:hover,.btn:hover{border-color:var(--c1); color:var(--c1);}
 
+.privacy{background:var(--card); border:1px solid var(--rule); border-radius:var(--r); padding:16px 20px; box-shadow:var(--sh); margin-bottom:0; font-size:13.5px; color:var(--ink-2);}
+.privacy b{color:var(--ink);}
+.pv-bar{height:12px; border-radius:4px; background:var(--rule); overflow:hidden; margin:12px 0 8px;}
+.pv-bar > div{height:100%; background:var(--c1); border-radius:4px 0 0 4px;}
+.pv-legend{display:flex; gap:18px; flex-wrap:wrap; font-size:12.5px;}
+.pv-legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
 .banner{display:none; border-radius:12px; padding:12px 16px; margin-bottom:18px; font-size:14px; background:var(--c2-wash); color:var(--ink); border:1px solid var(--rule);}
 .banner.on{display:block;}
 
@@ -223,6 +229,8 @@ footer{margin-top:26px; font-size:12.5px; color:var(--ink-3); display:flex; just
     </div>
   </section>
 
+  <section class="privacy" id="privacy" style="display:none"></section>
+
   <!-- How to read -->
   <section class="howto">
     <div class="how"><span class="n">1</span><div><b>Every row is a real search</b>The exact words someone typed into Google before the site showed up.</div></div>
@@ -248,7 +256,7 @@ footer{margin-top:26px; font-size:12.5px; color:var(--ink-3); display:flex; just
     </div>
     <div class="card">
       <div class="card-h"><h2>What kind of searches were they?</h2></div>
-      <p class="sub">Share of visits. People who already knew the name versus people looking for a topic.</p>
+      <p class="sub">Share of visits with visible search words. People who already knew the name versus people looking for a topic.</p>
       <div class="split" id="brandSplit"></div>
       <div class="legend" id="brandLegend"></div>
       <div style="height:20px"></div>
@@ -423,9 +431,18 @@ function render(d){
   $('rangeLabel').textContent = niceDate(d.range.start) + ' to ' + niceDate(d.range.end);
 
   const clickedCount = rows.filter(r => r[1] > 0).length;
-  $('lede').innerHTML = 'In <b>' + esc(d.range.label) + '</b>, people found ' + esc(CONFIG.clientName) +
-    ' through <b>' + fmt(t.queries) + ' different Google searches</b>. ' + fmt(clickedCount) +
-    ' of them led to a visit, adding up to <b>' + fmt(t.clicks) + ' visits</b>.';
+  $('lede').innerHTML = 'In <b>' + esc(d.range.label) + '</b>, Google sent <b>' + fmt(t.clicks) + ' visits</b> to ' + esc(CONFIG.clientName) +
+    ' from <b>' + fmt(t.queries) + ' different searches</b> we can see. ' + fmt(clickedCount) + ' of those searches led to at least one visit.';
+  const hcl = d.hidden ? d.hidden.clicks : 0;
+  const pv = $('privacy');
+  if (hcl > 0 && t.clicks > 0) {
+    const shownClicks = Math.max(0, t.clicks - hcl);
+    pv.style.display = '';
+    pv.innerHTML = '<div class="pv-text"><b>Why the searches below add up to fewer visits.</b> Google hides the exact words of rare, one-off searches to protect people’s privacy. ' +
+      'Last month that was <b>' + fmt(hcl) + ' of ' + fmt(t.clicks) + ' visits</b>. The lists below cover the other ' + fmt(shownClicks) + ', which are the searches people make most often.</div>' +
+      '<div class="pv-bar" title="' + fmtPct(shownClicks / t.clicks * 100) + ' of visits have visible search words"><div style="width:' + (shownClicks / t.clicks * 100) + '%"></div></div>' +
+      '<div class="pv-legend"><span><i style="background:var(--c1)"></i>Search words visible · ' + fmt(shownClicks) + '</span><span><i style="background:var(--rule)"></i>Kept private by Google · ' + fmt(hcl) + '</span></div>';
+  } else pv.style.display = 'none';
 
   $('tClicks').textContent = fmt(t.clicks);
   $('tImpr').textContent = fmt(t.impressions);
@@ -441,10 +458,7 @@ function render(d){
   devices(d.devices || []);
   bars('countries', (d.countries || []).slice().sort((a, b) => b[1] - a[1]).slice(0, 5).map(c => [countryName(c[0]), c[1]]), 'visits');
 
-  const hc = d.hidden ? d.hidden.clicks : 0;
-  $('hiddenNote').textContent = hc > 0
-    ? 'Google keeps very rare searches private to protect people’s privacy, so ' + fmt(hc) + ' visits aren’t tied to a search above.'
-    : '';
+  $('hiddenNote').textContent = '';
   table.reset();
 }
 function niceDate(s){ const [y, m, dd] = s.split('-').map(Number); return new Date(y, m - 1, dd).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }); }
