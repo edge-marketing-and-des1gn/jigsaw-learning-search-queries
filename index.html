@@ -3,639 +3,611 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Google Searches</title>
+<meta name="color-scheme" content="light">
+<title>Organic Search Queries</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   What people typed into Google before landing on the site,
-   last full calendar month. Data: Google Search Console via the
-   EDGE AI Visibility Tracker web app (action=gscQueries).
+   Organic search queries from Google Search Console, styled to sit
+   inside an AgencyAnalytics report: Geist, white widgets with a hairline
+   border, #555 bold numerals, black lines and bars, AA donut colours.
+   Defaults to last full month; any range can be picked.
 
-   Link format (nothing secret lives in this repo):
-     index.html#feed=<tracker /exec URL>&t=<client token>&domain=<domain>&name=<Client name>
-   Open index.html#demo to see it with sample numbers.
+   Link (nothing secret lives in this repo; the # part never reaches GitHub):
+     index.html#feed=<tracker /exec URL>&t=<client token>&domain=<domain>&name=<Client>
+   index.html#demo shows sample numbers.
 ========================================================= */
 :root{
   color-scheme:light;
-  --paper:#F6F5F1; --card:#FFFFFF; --ink:#1A2326; --ink-2:#46545A; --ink-3:#6A777C;
-  --rule:#E2E1DA; --rule-soft:#EEEDE7; --wash:#EFF4F4;
-  --c1:#0089A0;  /* clicks / visits / phone / name searches */
-  --c2:#C9772B;  /* times shown / desktop / topic searches */
-  --c3:#6B5CA5;  /* tablet / questions */
-  --c1-wash:#E1F0F2; --c2-wash:#F7EADD;
-  --good:#2F7D4F; --warn:#A8621B;
-  --sh:0 1px 2px rgba(20,30,35,.05), 0 6px 22px rgba(20,30,35,.05);
-  --r:16px;
-  --display:'Fraunces', Georgia, serif; --ui:'Inter', system-ui, sans-serif;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    color-scheme:dark;
-    --paper:#101517; --card:#161D20; --ink:#E7EEF0; --ink-2:#B3C0C4; --ink-3:#8B999E;
-    --rule:#273236; --rule-soft:#1E272A; --wash:#18262A;
-    --c1:#1FA3B1; --c2:#CC8038; --c3:#8A79CC; --c1-wash:#123036; --c2-wash:#33251A;
-    --good:#5DBB82; --warn:#E0A060;
-    --sh:0 1px 2px rgba(0,0,0,.3);
-  }
-}
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --paper:#101517; --card:#161D20; --ink:#E7EEF0; --ink-2:#B3C0C4; --ink-3:#8B999E;
-  --rule:#273236; --rule-soft:#1E272A; --wash:#18262A;
-  --c1:#1FA3B1; --c2:#CC8038; --c3:#8A79CC; --c1-wash:#123036; --c2-wash:#33251A;
-  --good:#5DBB82; --warn:#E0A060;
-  --sh:0 1px 2px rgba(0,0,0,.3);
+  --page:#F8F8F8; --card:#FFFFFF; --line:#EBEDF0; --line-2:#F2F3F5; --track:#E4E4E7;
+  --ink:#222A30; --ink-2:#55606A; --ink-3:#8A949C; --num:#555555; --bar:#171614;
+  --blue:#5CBAE6; --lime:#B6D957; --amber:#FAC364; --sky:#8CD3FF; --clay:#D97757;
+  --up:#2E8540; --down:#C0392B;
+  --r:6px;
+  --font:'Geist','Helvetica Neue',Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;}
-body{background:var(--paper); color:var(--ink); font-family:var(--ui); font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;}
-.wrap{max-width:1180px; margin:0 auto; padding:28px 16px 60px;}
-h1,h2,h3{margin:0; font-weight:600;}
-h1{font-family:var(--display); font-size:clamp(28px,4.4vw,44px); line-height:1.08; letter-spacing:-.02em;}
-h2{font-family:var(--display); font-size:21px; letter-spacing:-.01em;}
-.muted{color:var(--ink-3);}
+body{background:var(--page); color:var(--ink); font-family:var(--font); font-size:14px; line-height:1.45; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:1180px; margin:0 auto; padding:20px 16px 36px;}
 .num{font-variant-numeric:tabular-nums;}
+button{font:inherit;}
 
 /* header */
-.top{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:22px;}
-.eyebrow{font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--c1); margin-bottom:8px;}
-.lede{font-size:17px; color:var(--ink-2); max-width:62ch; margin-top:12px;}
-.lede b{color:var(--ink);}
-.month-pill{display:inline-flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--rule); border-radius:999px; padding:8px 14px; font-weight:600; font-size:13.5px; box-shadow:var(--sh);}
-.month-pill .dot{width:8px; height:8px; border-radius:50%; background:var(--c1);}
-.top-meta{display:flex; flex-direction:column; align-items:flex-end; gap:8px;}
-.small{font-size:12.5px;}
-button,.btn{font:inherit; font-size:13px; font-weight:600; border:1px solid var(--rule); background:var(--card); color:var(--ink); border-radius:10px; padding:8px 12px; cursor:pointer;}
-button:hover,.btn:hover{border-color:var(--c1); color:var(--c1);}
+.top{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+.brand{display:flex; align-items:center; gap:10px; min-width:0;}
+.brand h1{margin:0; font-size:20px; font-weight:600; letter-spacing:-.01em;}
+.brand .sub{font-size:12.5px; color:var(--ink-3); margin-top:1px;}
+.gsc{width:22px; height:22px; flex:none;}
+.controls{display:flex; align-items:center; gap:10px; flex-wrap:wrap; position:relative;}
+.vs{font-size:12.5px; color:var(--ink-3);}
+.datebtn{display:inline-flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--track); border-radius:var(--r); padding:7px 11px; font-size:13px; font-weight:500; color:var(--ink); cursor:pointer;}
+.datebtn:hover{border-color:#cfd3d8;}
+.datebtn svg{width:14px; height:14px;}
+.datebtn .caret{width:10px; height:10px; opacity:.6;}
+.menu{position:absolute; right:0; top:calc(100% + 6px); z-index:20; background:var(--card); border:1px solid var(--line); border-radius:8px; box-shadow:0 10px 30px rgba(20,25,30,.12); width:290px; padding:6px; display:none;}
+.menu.on{display:block;}
+.menu button.opt{display:flex; width:100%; justify-content:space-between; align-items:center; border:0; background:none; text-align:left; padding:8px 10px; border-radius:5px; font-size:13px; color:var(--ink); cursor:pointer;}
+.menu button.opt:hover{background:var(--line-2);}
+.menu button.opt.sel{font-weight:600;}
+.menu button.opt.sel::after{content:'✓'; color:var(--ink-2);}
+.menu .sep{height:1px; background:var(--line); margin:6px 4px;}
+.custom{padding:6px 10px 8px; display:none;}
+.custom.on{display:block;}
+.custom label{display:block; font-size:11.5px; color:var(--ink-3); margin:6px 0 3px;}
+.custom input{width:100%; font:inherit; font-size:13px; padding:7px 8px; border:1px solid var(--track); border-radius:5px; color:var(--ink);}
+.custom .apply{margin-top:10px; width:100%; border:0; background:var(--bar); color:#fff; border-radius:5px; padding:8px; font-weight:600; font-size:13px; cursor:pointer;}
+.custom .hint{font-size:11.5px; color:var(--ink-3); margin-top:6px;}
 
-.privacy{background:var(--card); border:1px solid var(--rule); border-radius:var(--r); padding:16px 20px; box-shadow:var(--sh); margin-bottom:0; font-size:13.5px; color:var(--ink-2);}
-.privacy b{color:var(--ink);}
-.pv-bar{height:12px; border-radius:4px; background:var(--rule); overflow:hidden; margin:12px 0 8px;}
-.pv-bar > div{height:100%; background:var(--c1); border-radius:4px 0 0 4px;}
-.pv-legend{display:flex; gap:18px; flex-wrap:wrap; font-size:12.5px;}
-.pv-legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
-.banner{display:none; border-radius:12px; padding:12px 16px; margin-bottom:18px; font-size:14px; background:var(--c2-wash); color:var(--ink); border:1px solid var(--rule);}
-.banner.on{display:block;}
+/* widgets */
+.grid{display:grid; gap:12px; margin-bottom:12px;}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr));}
+.g21{grid-template-columns:minmax(0,2fr) minmax(0,1fr);}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr));}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr));}
+.w{background:var(--card); border:0.8px solid var(--line); border-radius:var(--r); min-width:0; display:flex; flex-direction:column;}
+.wh{display:flex; align-items:center; gap:8px; padding:12px 16px 0; min-height:40px;}
+.wh .t{font-size:14px; font-weight:500; color:var(--ink); letter-spacing:.01em;}
+.wh .r{margin-left:auto; font-size:14px; font-weight:600; color:var(--ink);}
+.info{display:inline-grid; place-items:center; width:15px; height:15px; border-radius:50%; border:1px solid #c9ced3; color:var(--ink-3); font-size:10px; font-weight:600; cursor:help; position:relative; flex:none;}
+.info:hover::after, .info:focus::after{content:attr(data-tip); position:absolute; left:50%; top:22px; transform:translateX(-50%); width:240px; background:var(--ink); color:#fff; font-size:12px; font-weight:400; line-height:1.4; padding:8px 10px; border-radius:6px; z-index:30; white-space:normal; text-align:left;}
+.wb{padding:12px 16px 16px; flex:1; position:relative;}
 
-/* stat tiles */
-.tiles{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:14px;}
-.tile{background:var(--card); border:1px solid var(--rule); border-radius:var(--r); padding:18px 20px; box-shadow:var(--sh); position:relative; overflow:hidden;}
-.tile::before{content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--accent, var(--c1));}
-.tile .label{font-size:13px; font-weight:600; color:var(--ink-2); display:flex; align-items:center; gap:7px;}
-.tile .val{font-family:var(--display); font-size:38px; line-height:1.1; margin:6px 0 4px; letter-spacing:-.02em;}
-.tile .explain{font-size:12.5px; color:var(--ink-3);}
-.ico{width:16px; height:16px; flex:none;}
+/* KPI */
+.kpi .wb{display:flex; flex-direction:column; align-items:center; justify-content:center; padding:18px 16px 22px; min-height:150px;}
+.kpi .big{font-size:52px; font-weight:700; color:var(--num); line-height:1; letter-spacing:-.01em;}
+.kpi .big small{font-size:26px; font-weight:700; margin-left:2px;}
+.delta{margin-top:12px; font-size:12.5px; font-weight:600; color:var(--ink-3); display:flex; align-items:center; gap:5px;}
+.delta.up{color:var(--up);} .delta.down{color:var(--down);}
+.delta .was{font-weight:400; color:var(--ink-3);}
 
-/* cards */
-.grid{display:grid; gap:14px; margin-top:14px;}
-.g2{grid-template-columns:1fr 1fr;}
-.g3{grid-template-columns:1.3fr 1fr;}
-.card{background:var(--card); border:1px solid var(--rule); border-radius:var(--r); padding:20px 22px; box-shadow:var(--sh); min-width:0;}
-.card-h{display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:4px;}
-.card .sub{font-size:13px; color:var(--ink-3); margin:2px 0 14px; max-width:60ch;}
+/* privacy */
+.priv{padding:12px 16px; font-size:12.5px; color:var(--ink-2); display:grid; grid-template-columns:minmax(0,1fr) minmax(220px,340px); gap:8px 18px; align-items:center;}
+.priv b{color:var(--ink); font-weight:600;}
+.ptrack{height:12px; border-radius:999px; background:var(--track); overflow:hidden;}
+.ptrack i{display:block; height:100%; background:var(--bar);}
+.plegend{display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-3); margin-top:5px;}
 
 /* line chart */
-.chart{position:relative; width:100%;}
+.seg{display:inline-flex; border:1px solid var(--track); border-radius:5px; overflow:hidden; margin-left:10px;}
+.seg button{border:0; border-left:1px solid var(--track); background:var(--card); font-size:12px; font-weight:500; color:var(--ink-2); padding:4px 9px; cursor:pointer;}
+.seg button:first-child{border-left:0;}
+.seg button.on{background:var(--bar); color:#fff;}
 .chart svg{display:block; width:100%; height:auto; overflow:visible;}
-.axis text{fill:var(--ink-3); font-size:11px; font-family:var(--ui);}
-.grid-line{stroke:var(--rule-soft); stroke-width:1;}
-.tip{position:absolute; pointer-events:none; background:var(--ink); color:var(--paper); border-radius:10px; padding:8px 11px; font-size:12.5px; line-height:1.4; white-space:nowrap; transform:translate(-50%,-100%); margin-top:-12px; opacity:0; transition:opacity .12s;}
+.ax{fill:#6b7280; font-size:11px; font-family:var(--font);}
+.gl{stroke:#F0F0F0; stroke-width:1;}
+.tip{position:absolute; pointer-events:none; background:#fff; border:1px solid var(--line); box-shadow:0 6px 18px rgba(20,25,30,.12); color:var(--ink); border-radius:6px; padding:7px 10px; font-size:12px; line-height:1.45; white-space:nowrap; transform:translate(-50%,-100%); margin-top:-12px; opacity:0; transition:opacity .1s;}
 .tip.on{opacity:1;}
-.tip b{font-weight:700;}
+.tip b{font-weight:600;}
 
-/* bar lists */
-.bars{display:flex; flex-direction:column; gap:9px;}
-.bar-row{display:grid; grid-template-columns:minmax(0,1fr) 64px; gap:10px; align-items:center; cursor:default;}
-.bar-row .name{font-size:13.5px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:3px;}
-.bar-track{height:10px; background:var(--rule-soft); border-radius:4px; overflow:hidden;}
-.bar-fill{height:100%; background:var(--c1); border-radius:4px; min-width:3px; transition:width .5s ease;}
-.bar-row .v{text-align:right; font-weight:600; font-size:13.5px;}
-.bar-row:hover .bar-fill{filter:brightness(1.1);}
-.rank{display:inline-grid; place-items:center; width:20px; height:20px; border-radius:6px; background:var(--wash); color:var(--ink-2); font-size:11px; font-weight:700; margin-right:7px;}
+/* bars */
+.bars{display:flex; flex-direction:column; gap:12px;}
+.bar .row{display:flex; justify-content:space-between; gap:10px; font-size:13px; margin-bottom:5px;}
+.bar .row span:first-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink);}
+.bar .row span:last-child{font-weight:600; color:var(--ink); flex:none;}
+.track{height:12px; background:var(--track); border-radius:999px; overflow:hidden;}
+.track i{display:block; height:100%; background:var(--bar); min-width:6px; border-radius:999px 0 0 999px;}
 
-/* split bar */
-.split{display:flex; height:30px; border-radius:8px; overflow:hidden; gap:2px; margin:6px 0 12px;}
-.split > div{height:100%; min-width:4px;}
-.legend{display:flex; flex-direction:column; gap:8px;}
-.leg{display:grid; grid-template-columns:12px 1fr auto auto; gap:10px; align-items:center; font-size:13.5px;}
-.sw{width:12px; height:12px; border-radius:3px;}
-.leg .pct{font-weight:700; min-width:42px; text-align:right;}
-.leg .cnt{color:var(--ink-3); font-size:12.5px; min-width:80px; text-align:right;}
+/* donut */
+.donut{display:flex; align-items:center; justify-content:center; gap:22px; flex-wrap:wrap; padding:6px 0;}
+.donut svg{width:180px; height:180px; flex:none;}
+.dl{display:flex; flex-direction:column; gap:7px; min-width:140px;}
+.dl div{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-2);}
+.dl i{width:9px; height:9px; border-radius:50%; flex:none;}
+.dl b{margin-left:auto; padding-left:14px; color:var(--ink); font-weight:600;}
+.dc1{font-size:24px; font-weight:700; fill:var(--num); font-family:var(--font);}
+.dc2{font-size:11.5px; fill:#6b7280; font-family:var(--font);}
 
-/* opportunity lists */
-.opps{display:flex; flex-direction:column; gap:0;}
-.opp{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; padding:11px 0; border-top:1px solid var(--rule-soft);}
-.opp:first-child{border-top:none;}
-.opp .q{font-weight:600; font-size:14px; overflow-wrap:anywhere;}
-.opp .meta{font-size:12.5px; color:var(--ink-3); grid-column:1/-1;}
-.badge{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; border-radius:999px; padding:3px 9px; white-space:nowrap;}
-.b-top{background:var(--c1-wash); color:var(--ink);}
-.b-p1{background:var(--wash); color:var(--ink);}
-.b-p2{background:var(--c2-wash); color:var(--ink);}
-.b-far{background:var(--rule-soft); color:var(--ink-2);}
-.badge i{width:7px; height:7px; border-radius:50%; display:inline-block;}
-.b-top i{background:var(--c1);} .b-p1 i{background:var(--c3);} .b-p2 i{background:var(--c2);} .b-far i{background:var(--ink-3);}
-.empty{font-size:13.5px; color:var(--ink-3); padding:8px 0;}
+/* tables */
+.tbl{width:100%; border-collapse:collapse; font-size:13px;}
+.tbl th{text-align:left; font-weight:500; font-size:12px; color:var(--ink-2); padding:9px 10px; border-bottom:1px solid var(--line); background:#FBFBFC; white-space:nowrap; cursor:pointer; user-select:none;}
+.tbl th.r, .tbl td.r{text-align:right;}
+.tbl th .a{opacity:.35; margin-left:3px; font-size:10px;}
+.tbl th.s .a{opacity:1;}
+.tbl td{padding:9px 10px; border-bottom:1px solid var(--line-2); color:var(--ink); vertical-align:top;}
+.tbl tr:last-child td{border-bottom:0;}
+.tbl tbody tr:hover td{background:#FAFAFB;}
+.tbl td.q{overflow-wrap:anywhere;}
+.tbl td.pg{font-size:12px; color:var(--ink-3); overflow-wrap:anywhere;}
+.tbl td.pg a{color:var(--ink-3); text-decoration:underline; text-decoration-color:#d4d8dc;}
+.tbl td.pg a:hover{color:var(--ink);}
+.tw{overflow-x:auto;}
+.empty{color:var(--ink-3); font-size:13px; text-align:center; padding:26px 0;}
+.tools{display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:0 16px 12px;}
+.search{flex:1; min-width:200px; font:inherit; font-size:13px; padding:8px 11px; border:1px solid var(--track); border-radius:5px; color:var(--ink);}
+.search:focus{outline:2px solid #d4d8dc; outline-offset:0;}
+.fchips{display:flex; gap:6px; flex-wrap:wrap;}
+.fchip{border:1px solid var(--track); background:var(--card); border-radius:5px; padding:6px 10px; font-size:12.5px; color:var(--ink-2); cursor:pointer;}
+.fchip.on{background:var(--bar); border-color:var(--bar); color:#fff;}
+.btn{border:1px solid var(--track); background:var(--card); border-radius:5px; padding:6px 11px; font-size:12.5px; font-weight:500; color:var(--ink); cursor:pointer;}
+.btn:hover{border-color:#cfd3d8;}
+.pager{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 16px 14px; font-size:12.5px; color:var(--ink-3); flex-wrap:wrap;}
+.pager .pbtns{display:flex; gap:6px;}
+.pager button[disabled]{opacity:.4; cursor:default;}
 
-/* how to read */
-.howto{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px;}
-.how{display:flex; gap:12px; align-items:flex-start; background:var(--wash); border-radius:14px; padding:14px 16px; font-size:13.5px; color:var(--ink-2);}
-.how b{color:var(--ink); display:block; margin-bottom:2px;}
-.how .n{flex:none; width:26px; height:26px; border-radius:50%; background:var(--card); display:grid; place-items:center; font-weight:700; color:var(--c1); border:1px solid var(--rule);}
+.banner{display:none; background:#FFF8E6; border:1px solid #F3E2B3; color:var(--ink); border-radius:var(--r); padding:10px 14px; font-size:13px; margin-bottom:12px;}
+.banner.on{display:block;}
+.loading{position:fixed; inset:0; background:rgba(248,248,248,.6); display:none; place-items:center; z-index:15;}
+.loading.on{display:grid;}
+.spin{width:28px; height:28px; border:3px solid var(--track); border-top-color:var(--bar); border-radius:50%; animation:sp .8s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+footer{text-align:center; font-size:11.5px; color:var(--ink-3); margin-top:4px;}
 
-/* table */
-.tools{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:6px 0 12px;}
-.search{flex:1; min-width:200px; font:inherit; font-size:14px; padding:10px 14px; border-radius:10px; border:1px solid var(--rule); background:var(--paper); color:var(--ink);}
-.search:focus{outline:2px solid var(--c1); outline-offset:1px;}
-.chips{display:flex; gap:6px; flex-wrap:wrap;}
-.chip{border-radius:999px; padding:7px 12px; font-size:12.5px;}
-.chip.on{background:var(--ink); color:var(--paper); border-color:var(--ink);}
-.table-wrap{overflow-x:auto; border:1px solid var(--rule); border-radius:12px;}
-table{width:100%; border-collapse:collapse; font-size:13.5px;}
-th{position:sticky; top:0; background:var(--card); text-align:left; font-size:12px; color:var(--ink-3); font-weight:600; padding:10px 12px; border-bottom:1px solid var(--rule); cursor:pointer; user-select:none; white-space:nowrap;}
-th.r,td.r{text-align:right;}
-th .arr{opacity:.35; margin-left:3px;}
-th.sorted .arr{opacity:1; color:var(--c1);}
-td{padding:9px 12px; border-bottom:1px solid var(--rule-soft); vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-tbody tr:hover{background:var(--wash);}
-td.q{font-weight:500; overflow-wrap:anywhere; min-width:180px;}
-td.page a{color:var(--ink-3); text-decoration:none; font-size:12.5px;}
-td.page a:hover{color:var(--c1); text-decoration:underline;}
-.mini{display:inline-block; vertical-align:middle; height:6px; border-radius:3px; background:var(--c1); margin-right:8px; opacity:.85;}
-.more{display:block; margin:12px auto 0;}
-.count-line{font-size:12.5px; color:var(--ink-3);}
-
-footer{margin-top:26px; font-size:12.5px; color:var(--ink-3); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;}
-.skel{color:transparent !important; background:var(--rule-soft); border-radius:6px; animation:pulse 1.2s infinite;}
-@keyframes pulse{50%{opacity:.55;}}
-
-@media (max-width:900px){
-  .tiles{grid-template-columns:1fr 1fr;}
-  .g2,.g3,.howto{grid-template-columns:1fr;}
-  .top-meta{align-items:flex-start;}
-}
-@media (max-width:480px){
-  .tile .val{font-size:30px;}
-  .card{padding:16px;}
-  .hide-sm{display:none;}
-}
-@media print{
-  body{background:#fff;} .tools,.more,button{display:none !important;} .card,.tile{box-shadow:none; break-inside:avoid;}
-}
+@media (max-width:960px){ .g4{grid-template-columns:repeat(2,minmax(0,1fr));} .g21,.g3,.g2{grid-template-columns:1fr;} .priv{grid-template-columns:1fr;} }
+@media (max-width:480px){ .kpi .big{font-size:40px;} .menu{width:calc(100vw - 32px);} .hide-sm{display:none;} }
+@media print{ body{background:#fff;} .tools,.pager .pbtns{display:none;} .w{break-inside:avoid;} }
 </style>
 </head>
 <body>
+<div class="loading" id="loading"><div class="spin" aria-label="Loading"></div></div>
 <div class="wrap">
-
   <div class="banner" id="banner"></div>
 
   <header class="top">
-    <div>
-      <div class="eyebrow" id="clientName">Jigsaw Learning</div>
-      <h1>What people searched on Google<br>to find your website</h1>
-      <p class="lede" id="lede"><span class="skel">Loading last month's searches from Google Search Console…</span></p>
+    <div class="brand">
+      <svg class="gsc" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" fill="#4285F4"/><rect x="4" y="5" width="16" height="10" rx="1" fill="#fff"/><path d="M7 13l3-3 2 2 4-4" fill="none" stroke="#34A853" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="9" y="18" width="6" height="2" rx="1" fill="#FBBC04"/><rect x="7" y="20" width="10" height="1.6" rx=".8" fill="#EA4335"/></svg>
+      <div>
+        <h1>Organic Search Queries</h1>
+        <div class="sub" id="sub">Google Search Console</div>
+      </div>
     </div>
-    <div class="top-meta">
-      <span class="month-pill"><span class="dot"></span><span id="monthLabel">Last month</span></span>
-      <span class="small muted" id="rangeLabel"></span>
-      <button id="refresh" type="button" title="Ask Google for the latest numbers">Refresh</button>
+    <div class="controls">
+      <span class="vs" id="vs"></span>
+      <button class="datebtn" id="datebtn" type="button" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <span id="dateLabel">Last Month</span>
+        <svg class="caret" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+      </button>
+      <div class="menu" id="menu" role="menu"></div>
     </div>
   </header>
 
-  <!-- 1. Headline numbers -->
-  <section class="tiles" id="tiles">
-    <div class="tile" style="--accent:var(--c1)">
-      <div class="label"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4l7 17 2.5-7.5L21 11z"/></svg>Visits from Google</div>
-      <div class="val num" id="tClicks">–</div>
-      <div class="explain">Times someone clicked through to the site from a Google search.</div>
+  <!-- KPIs -->
+  <section class="grid g4">
+    <div class="w kpi"><div class="wh"><span class="t">Clicks</span><span class="info" tabindex="0" data-tip="Visits to the site that came from someone clicking a Google search result.">i</span></div><div class="wb"><div class="big num" id="kClicks">–</div><div class="delta" id="dClicks"></div></div></div>
+    <div class="w kpi"><div class="wh"><span class="t">Impressions</span><span class="info" tabindex="0" data-tip="How many times the site appeared in someone's Google search results.">i</span></div><div class="wb"><div class="big num" id="kImpr">–</div><div class="delta" id="dImpr"></div></div></div>
+    <div class="w kpi"><div class="wh"><span class="t">CTR</span><span class="info" tabindex="0" data-tip="Click-through rate: out of every 100 times the site was shown, how many people clicked.">i</span></div><div class="wb"><div class="big num" id="kCtr">–</div><div class="delta" id="dCtr"></div></div></div>
+    <div class="w kpi"><div class="wh"><span class="t">Average Position</span><span class="info" tabindex="0" data-tip="Where the site usually ranked. 1 is the top result; 1 to 10 is the first page. Lower is better.">i</span></div><div class="wb"><div class="big num" id="kPos">–</div><div class="delta" id="dPos"></div></div></div>
+  </section>
+
+  <section class="w priv" id="priv" style="display:none;margin-bottom:12px"></section>
+
+  <!-- Trend + top queries -->
+  <section class="grid g21">
+    <div class="w">
+      <div class="wh"><span class="t" id="trendTitle">Clicks</span><span class="info" tabindex="0" data-tip="Day by day. Hover a day to see its numbers.">i</span>
+        <div class="seg" id="metricSeg"><button type="button" class="on" data-m="1">Clicks</button><button type="button" data-m="2">Impressions</button></div>
+        <span class="r num" id="trendTotal"></span></div>
+      <div class="wb chart" id="trend"></div>
     </div>
-    <div class="tile" style="--accent:var(--c2)">
-      <div class="label"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Times shown on Google</div>
-      <div class="val num" id="tImpr">–</div>
-      <div class="explain">Times the site appeared in someone's search results.</div>
-    </div>
-    <div class="tile" style="--accent:var(--c3)">
-      <div class="label"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Different searches</div>
-      <div class="val num" id="tQueries">–</div>
-      <div class="explain">Unique things people typed that showed the site.</div>
-    </div>
-    <div class="tile" style="--accent:var(--ink-3)">
-      <div class="label"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/></svg>Average spot on Google</div>
-      <div class="val num" id="tPos">–</div>
-      <div class="explain" id="tPosNote">1 is the very top result. 1–10 is page one.</div>
+    <div class="w">
+      <div class="wh"><span class="t">Top Queries</span><span class="info" tabindex="0" data-tip="The searches that brought the most clicks.">i</span><span class="r" style="font-weight:500;color:var(--ink-3);font-size:12.5px">Clicks</span></div>
+      <div class="wb"><div class="bars" id="topQ"></div></div>
     </div>
   </section>
 
-  <section class="privacy" id="privacy" style="display:none"></section>
-
-  <!-- How to read -->
-  <section class="howto">
-    <div class="how"><span class="n">1</span><div><b>Every row is a real search</b>The exact words someone typed into Google before the site showed up.</div></div>
-    <div class="how"><span class="n">2</span><div><b>Visits are what matter most</b>A search that brought visits worked. One that was only shown is a missed chance.</div></div>
-    <div class="how"><span class="n">3</span><div><b>Always last month</b>It shows the last complete month and moves on by itself on the 1st.</div></div>
-  </section>
-
-  <!-- 2. Trend -->
-  <section class="grid">
-    <div class="card">
-      <div class="card-h"><h2>Visits from Google, day by day</h2><span class="small muted" id="trendNote"></span></div>
-      <p class="sub">Hover or tap a day to see its visits and how often the site was shown.</p>
-      <div class="chart" id="trend"></div>
-    </div>
-  </section>
-
-  <!-- 3. Top searches + kinds of search -->
+  <!-- Donuts + countries -->
   <section class="grid g3">
-    <div class="card">
-      <div class="card-h"><h2>The 10 searches that brought the most visits</h2></div>
-      <p class="sub">Bar length is the number of visits each search brought.</p>
-      <div class="bars" id="topSearches"></div>
+    <div class="w">
+      <div class="wh"><span class="t">Branded vs Non-Branded</span><span class="info" tabindex="0" data-tip="Branded: the search included the business name. Non-branded: people searching for a topic who found the site. Counts only searches Google shows.">i</span></div>
+      <div class="wb"><div class="donut" id="brandDonut"></div></div>
     </div>
-    <div class="card">
-      <div class="card-h"><h2>What kind of searches were they?</h2></div>
-      <p class="sub">Share of visits with visible search words. People who already knew the name versus people looking for a topic.</p>
-      <div class="split" id="brandSplit"></div>
-      <div class="legend" id="brandLegend"></div>
-      <div style="height:20px"></div>
-      <h3 style="font-size:15px">Asked as a question</h3>
-      <p class="sub" style="margin-bottom:8px">Searches starting with how, what, why, can, etc. Great ideas for FAQs and blog posts.</p>
-      <div id="questionStat"></div>
+    <div class="w">
+      <div class="wh"><span class="t">Devices</span><span class="info" tabindex="0" data-tip="Clicks by the device people searched on.">i</span></div>
+      <div class="wb"><div class="donut" id="devDonut"></div></div>
+    </div>
+    <div class="w">
+      <div class="wh"><span class="t">Top Countries</span><span class="info" tabindex="0" data-tip="Where searchers were when they clicked.">i</span><span class="r" style="font-weight:500;color:var(--ink-3);font-size:12.5px">Clicks</span></div>
+      <div class="wb"><div class="bars" id="countries"></div></div>
     </div>
   </section>
 
-  <!-- 4. Opportunities -->
+  <!-- Opportunities -->
   <section class="grid g2">
-    <div class="card">
-      <div class="card-h"><h2>Almost at the top</h2><span class="badge b-p2"><i></i>Quick wins</span></div>
-      <p class="sub">Searches where the site sits just below the top spots (positions 4 to 20). A small improvement to the page could bring many more visits.</p>
-      <div class="opps" id="nearTop"></div>
+    <div class="w">
+      <div class="wh"><span class="t">Almost on Top</span><span class="info" tabindex="0" data-tip="Searches where the site ranks 4 to 20, just below the top spots. Small improvements to these pages can bring many more clicks.">i</span></div>
+      <div class="wb" style="padding-top:8px"><div class="tw"><table class="tbl" id="nearTbl"></table></div></div>
     </div>
-    <div class="card">
-      <div class="card-h"><h2>Seen a lot, clicked little</h2><span class="badge b-far"><i></i>Missed visits</span></div>
-      <p class="sub">The site showed up often for these but few people clicked. A clearer page title and description in Google usually helps.</p>
-      <div class="opps" id="lowClick"></div>
+    <div class="w">
+      <div class="wh"><span class="t">Seen Often, Rarely Clicked</span><span class="info" tabindex="0" data-tip="Searches that showed the site many times but got few clicks. A clearer page title and description in Google usually helps.">i</span></div>
+      <div class="wb" style="padding-top:8px"><div class="tw"><table class="tbl" id="lowTbl"></table></div></div>
     </div>
   </section>
 
-  <!-- 5. Where they landed / who -->
-  <section class="grid g3">
-    <div class="card">
-      <div class="card-h"><h2>Pages people landed on</h2></div>
-      <p class="sub">Which pages of the site Google sent visitors to.</p>
-      <div class="bars" id="topPages"></div>
-    </div>
-    <div class="card">
-      <div class="card-h"><h2>Phone, computer or tablet</h2></div>
-      <p class="sub">Share of visits by device.</p>
-      <div class="split" id="deviceSplit"></div>
-      <div class="legend" id="deviceLegend"></div>
-      <div style="height:20px"></div>
-      <h3 style="font-size:15px">Top countries</h3>
-      <p class="sub" style="margin-bottom:10px">Where searchers were, by visits.</p>
-      <div class="bars" id="countries"></div>
-    </div>
-  </section>
-
-  <!-- 6. Everything -->
+  <!-- Pages -->
   <section class="grid">
-    <div class="card">
-      <div class="card-h"><h2>Every search, all in one place</h2><span class="count-line" id="countLine"></span></div>
-      <p class="sub">Type to find a word, tap a filter, or click a column heading to sort. Download gives you the full list as a spreadsheet.</p>
-      <div class="tools">
-        <input class="search" id="q" type="search" placeholder="Find a search, e.g. course, training, near me" aria-label="Find a search">
-        <div class="chips" id="chips">
-          <button type="button" class="chip on" data-f="all">All</button>
-          <button type="button" class="chip" data-f="clicked">Brought visits</button>
-          <button type="button" class="chip" data-f="brand">Your name</button>
-          <button type="button" class="chip" data-f="topic">Topics</button>
-          <button type="button" class="chip" data-f="question">Questions</button>
-          <button type="button" class="chip" data-f="near">Almost top</button>
-        </div>
-        <button type="button" id="csv">Download CSV</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr>
-            <th data-k="0">Search<span class="arr">↕</span></th>
-            <th data-k="1" class="r">Visits<span class="arr">↕</span></th>
-            <th data-k="2" class="r">Shown<span class="arr">↕</span></th>
-            <th data-k="3" class="r hide-sm">Click rate<span class="arr">↕</span></th>
-            <th data-k="4" class="r">Google spot<span class="arr">↕</span></th>
-            <th data-k="5" class="hide-sm">Landed on<span class="arr">↕</span></th>
-          </tr></thead>
-          <tbody id="rows"></tbody>
-        </table>
-      </div>
-      <button type="button" class="more" id="more">Show 50 more</button>
+    <div class="w">
+      <div class="wh"><span class="t">Top Landing Pages</span><span class="info" tabindex="0" data-tip="The pages Google sent searchers to.">i</span></div>
+      <div class="wb" style="padding-top:8px"><div class="tw"><table class="tbl" id="pagesTbl"></table></div></div>
     </div>
   </section>
 
-  <footer>
-    <span id="hiddenNote"></span>
-    <span>Prepared by EDGE Marketing · Figures from Google Search Console</span>
-  </footer>
+  <!-- Everything -->
+  <section class="grid">
+    <div class="w">
+      <div class="wh"><span class="t">All Search Queries</span><span class="info" tabindex="0" data-tip="Every search Google reports for this period. Type to find a word, use a filter, or click a column to sort.">i</span><span class="r" style="font-weight:500;color:var(--ink-3);font-size:12.5px" id="allCount"></span></div>
+      <div class="wb" style="padding:12px 0 0">
+        <div class="tools">
+          <input class="search" id="q" type="search" placeholder="Search queries…" aria-label="Search queries">
+          <div class="fchips" id="fchips">
+            <button type="button" class="fchip on" data-f="all">All</button>
+            <button type="button" class="fchip" data-f="clicked">With clicks</button>
+            <button type="button" class="fchip" data-f="brand">Branded</button>
+            <button type="button" class="fchip" data-f="topic">Non-branded</button>
+            <button type="button" class="fchip" data-f="question">Questions</button>
+            <button type="button" class="fchip" data-f="near">Almost on top</button>
+          </div>
+          <button type="button" class="btn" id="csv">Download CSV</button>
+        </div>
+        <div class="tw"><table class="tbl" id="allTbl"></table></div>
+        <div class="pager"><span id="pageInfo"></span><div class="pbtns"><button type="button" class="btn" id="prev">Previous</button><button type="button" class="btn" id="next">Next</button></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>Data from Google Search Console · Prepared by EDGE Marketing</footer>
 </div>
 
 <script>
 /* =========================================================
-   SETTINGS
-   Everything private comes in through the link's # part, which
-   browsers never send to GitHub, so nothing secret is stored here.
+   SETTINGS — read from the link's # part
 ========================================================= */
-const params = new URLSearchParams(location.hash.slice(1) || location.search.slice(1));
+const P = new URLSearchParams(location.hash.slice(1) || location.search.slice(1));
 const CONFIG = {
-  feedUrl: params.get('feed') || '',
-  token:   params.get('t') || '',
-  key:     params.get('key') || '',
-  domain:  params.get('domain') || 'jigsawlearning.ca',
-  clientName: params.get('name') || 'Jigsaw Learning',
-  // Words that mean someone searched the business by name.
-  brandTerms: (params.get('brand') || 'jigsaw').split(',').map(s => s.trim().toLowerCase()).filter(Boolean),
-  demo: params.has('demo') || location.hash === '#demo',
+  feedUrl: P.get('feed') || '',
+  token: P.get('t') || '',
+  domain: P.get('domain') || 'jigsawlearning.ca',
+  clientName: P.get('name') || 'Jigsaw Learning',
+  brandTerms: (P.get('brand') || 'jigsaw').split(',').map(s => s.trim().toLowerCase()).filter(Boolean),
+  demo: P.has('demo') || location.hash === '#demo',
+  tz: 'America/Edmonton',
 };
-if (params.get('theme')) document.documentElement.setAttribute('data-theme', params.get('theme'));
 
 /* =========================================================
    HELPERS
 ========================================================= */
 const $ = id => document.getElementById(id);
-const fmt = n => Math.round(n).toLocaleString('en-CA');
-const fmtPct = n => (Math.round(n * 10) / 10).toLocaleString('en-CA') + '%';
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const fmt1 = n => (Math.round(n * 10) / 10).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const QUESTION = /^(how|what|why|when|where|who|which|can|could|do|does|is|are|should|will|would)\b/i;
+const QUESTION = /^(how|what|why|when|where|who|which|can|could|do|does|is|are|should|will|would|comment|pourquoi|quel|quelle)\b/i;
 const isBrand = q => CONFIG.brandTerms.some(t => q.toLowerCase().indexOf(t) !== -1);
 const isQuestion = q => QUESTION.test(q.trim()) || q.trim().endsWith('?');
-const isNear = r => r[4] > 3 && r[4] <= 20 && r[2] >= 5;
-const shortPath = url => { try { const u = new URL(url); return (u.pathname === '/' ? 'Home page' : decodeURIComponent(u.pathname).replace(/\/$/, '')); } catch (e) { return url || '—'; } };
-const COUNTRY = {can:'Canada',usa:'United States',gbr:'United Kingdom',ind:'India',aus:'Australia',phl:'Philippines',pak:'Pakistan',nga:'Nigeria',deu:'Germany',fra:'France',irl:'Ireland',nzl:'New Zealand',zaf:'South Africa',mex:'Mexico',bra:'Brazil',chn:'China',jpn:'Japan',kor:'South Korea',are:'United Arab Emirates',sgp:'Singapore',nld:'Netherlands',esp:'Spain',ita:'Italy',ken:'Kenya',gha:'Ghana',bgd:'Bangladesh',egy:'Egypt',sau:'Saudi Arabia',tur:'Turkey',vnm:'Vietnam',idn:'Indonesia',mys:'Malaysia',jam:'Jamaica',col:'Colombia',arg:'Argentina',pol:'Poland',swe:'Sweden',che:'Switzerland',bel:'Belgium',prt:'Portugal'};
-const countryName = c => COUNTRY[String(c).toLowerCase()] || String(c).toUpperCase();
-function spot(pos){
-  if (pos <= 3) return '<span class="badge b-top"><i></i>Top 3 · ' + pos + '</span>';
-  if (pos <= 10) return '<span class="badge b-p1"><i></i>Page 1 · ' + pos + '</span>';
-  if (pos <= 20) return '<span class="badge b-p2"><i></i>Page 2 · ' + pos + '</span>';
-  return '<span class="badge b-far"><i></i>Further · ' + pos + '</span>';
+const isNear = r => r[4] > 3 && r[4] <= 20 && r[2] >= 10;
+const path = url => { try { const u = new URL(url); return u.pathname === '/' ? '/ (home page)' : decodeURIComponent(u.pathname); } catch (e) { return url || '—'; } };
+const COUNTRY = {can:'Canada',usa:'United States',gbr:'United Kingdom',ind:'India',aus:'Australia',phl:'Philippines',pak:'Pakistan',nga:'Nigeria',deu:'Germany',fra:'France',irl:'Ireland',nzl:'New Zealand',zaf:'South Africa',mex:'Mexico',bra:'Brazil',chn:'China',jpn:'Japan',kor:'South Korea',are:'United Arab Emirates',sgp:'Singapore',nld:'Netherlands',esp:'Spain',ita:'Italy',ken:'Kenya',gha:'Ghana',bgd:'Bangladesh',egy:'Egypt',sau:'Saudi Arabia',tur:'Turkey',vnm:'Vietnam',idn:'Indonesia',mys:'Malaysia',jam:'Jamaica',col:'Colombia',arg:'Argentina',pol:'Poland',swe:'Sweden',che:'Switzerland',bel:'Belgium',prt:'Portugal',hkg:'Hong Kong',twn:'Taiwan',isr:'Israel',nor:'Norway',dnk:'Denmark',fin:'Finland',aut:'Austria',rou:'Romania',ukr:'Ukraine',rus:'Russia',tha:'Thailand',lka:'Sri Lanka',npl:'Nepal',eth:'Ethiopia',uga:'Uganda',tza:'Tanzania',zwe:'Zimbabwe',cmr:'Cameroon',hti:'Haiti',tto:'Trinidad and Tobago'};
+const country = c => COUNTRY[String(c).toLowerCase()] || String(c).toUpperCase();
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const shortDay = s => { const [, m, d] = s.split('-').map(Number); return d + ' ' + MON[m - 1]; };
+
+/* Today's date in Edmonton */
+function todayParts(){ const s = new Intl.DateTimeFormat('en-CA', { timeZone: CONFIG.tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); return s.split('-').map(Number); }
+const iso = (y, m, d) => new Date(Date.UTC(y, m - 1, d)).toISOString().slice(0, 10);
+const addDays = (s, n) => { const d = new Date(s + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+
+/* =========================================================
+   DATE RANGES — Last Month is the default
+========================================================= */
+const PRESETS = [
+  ['lastMonth', 'Last Month'], ['thisMonth', 'This Month'], ['last7', 'Last 7 Days'], ['last30', 'Last 30 Days'],
+  ['last90', 'Last 90 Days'], ['last3m', 'Last 3 Months'], ['last6m', 'Last 6 Months'], ['last12m', 'Last 12 Months'], ['ytd', 'Year to Date'],
+];
+function rangeFor(key){
+  const [y, m, d] = todayParts(); const today = iso(y, m, d); const yest = addDays(today, -1);
+  const monthsBack = n => ({ start: iso(y, m - n, 1), end: iso(y, m, 0) });
+  switch (key){
+    case 'thisMonth': return { start: iso(y, m, 1), end: yest < iso(y, m, 1) ? iso(y, m, 1) : yest };
+    case 'last7': return { start: addDays(yest, -6), end: yest };
+    case 'last30': return { start: addDays(yest, -29), end: yest };
+    case 'last90': return { start: addDays(yest, -89), end: yest };
+    case 'last3m': return monthsBack(3);
+    case 'last6m': return monthsBack(6);
+    case 'last12m': return monthsBack(12);
+    case 'ytd': return { start: iso(y, 1, 1), end: yest };
+    default: return monthsBack(1);
+  }
 }
+let current = { key: 'lastMonth', ...rangeFor('lastMonth') };
+
+function buildMenu(){
+  const menu = $('menu');
+  menu.innerHTML = PRESETS.map(([k, l]) => '<button type="button" class="opt' + (current.key === k ? ' sel' : '') + '" data-k="' + k + '">' + l + '</button>').join('') +
+    '<div class="sep"></div><button type="button" class="opt' + (current.key === 'custom' ? ' sel' : '') + '" data-k="custom">Custom Range</button>' +
+    '<div class="custom' + (current.key === 'custom' ? ' on' : '') + '" id="custom"><label for="from">From</label><input type="date" id="from" value="' + current.start + '"><label for="to">To</label><input type="date" id="to" value="' + current.end + '"><button type="button" class="apply" id="apply">Apply</button><div class="hint">Google keeps the last 16 months. The newest 2 days are still being finalized.</div></div>';
+  menu.querySelectorAll('.opt').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    const k = b.dataset.k;
+    if (k === 'custom'){ $('custom').classList.add('on'); menu.querySelectorAll('.opt').forEach(x => x.classList.toggle('sel', x === b)); return; }
+    current = { key: k, ...rangeFor(k) }; closeMenu(); load();
+  }));
+  $('apply').addEventListener('click', e => {
+    e.stopPropagation();
+    const f = $('from').value, t = $('to').value;
+    if (!f || !t || f > t){ $('from').focus(); return; }
+    current = { key: 'custom', start: f, end: t }; closeMenu(); load();
+  });
+}
+function openMenu(){ buildMenu(); $('menu').classList.add('on'); $('datebtn').setAttribute('aria-expanded', 'true'); }
+function closeMenu(){ $('menu').classList.remove('on'); $('datebtn').setAttribute('aria-expanded', 'false'); }
+$('datebtn').addEventListener('click', e => { e.stopPropagation(); $('menu').classList.contains('on') ? closeMenu() : openMenu(); });
+$('menu').addEventListener('click', e => e.stopPropagation());
+document.addEventListener('click', closeMenu);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
 /* =========================================================
    DATA
-   The last good answer for this month is kept in the browser so
-   the page opens instantly, then refreshes quietly.
 ========================================================= */
-const STORE = 'gscQueries:v1:' + CONFIG.domain;
-async function load(force){
-  if (CONFIG.demo || !CONFIG.feedUrl) {
-    if (!CONFIG.demo) showBanner('This link isn’t connected to Google yet, so you’re looking at <b>sample numbers</b>. Open it from the SEO tool to see the real searches.');
-    else showBanner('You’re looking at <b>sample numbers</b>.');
-    return render(demoData());
+const STORE = 'gscq:v2:' + CONFIG.domain + ':';
+async function load(){
+  const label = current.key === 'custom' ? 'Custom Range' : (PRESETS.find(p => p[0] === current.key) || [0, 'Last Month'])[1];
+  $('dateLabel').textContent = label;
+  if (CONFIG.demo || !CONFIG.feedUrl){
+    banner(CONFIG.demo ? 'You’re looking at <b>sample numbers</b>.' : 'This link isn’t connected to Search Console yet, so these are <b>sample numbers</b>.');
+    return render(demo(current));
   }
-  let cached = null;
-  try { cached = JSON.parse(localStorage.getItem(STORE) || 'null'); } catch (e) {}
-  if (cached && !force) render(cached);
+  const key = STORE + current.start + ':' + current.end;
+  let cached = null; try { cached = JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) {}
+  if (cached) render(cached);
+  $('loading').classList.toggle('on', !cached);
   try {
-    const p = new URLSearchParams({ action: 'gscQueries', domain: CONFIG.domain });
+    const p = new URLSearchParams({ action: 'gscQueries', domain: CONFIG.domain, start: current.start, end: current.end });
     if (CONFIG.token) p.set('t', CONFIG.token);
-    if (CONFIG.key) p.set('key', CONFIG.key);
-    if (force) p.set('fresh', Date.now());
-    const url = CONFIG.feedUrl + (CONFIG.feedUrl.indexOf('?') === -1 ? '?' : '&') + p.toString();
-    const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), 120000);
-    const res = await fetch(url, { cache: 'no-store', redirect: 'follow', signal: ctl.signal });
+    const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), 150000);
+    const res = await fetch(CONFIG.feedUrl + (CONFIG.feedUrl.includes('?') ? '&' : '?') + p, { cache: 'no-store', redirect: 'follow', signal: ctl.signal });
     clearTimeout(timer);
     const j = await res.json();
     if (!j || j.error) throw new Error((j && j.error) || 'empty answer');
-    try { localStorage.setItem(STORE, JSON.stringify(j)); } catch (e) {}
-    hideBanner();
-    render(j);
+    try { localStorage.setItem(key, JSON.stringify(j)); }
+    catch (e) { try { Object.keys(localStorage).filter(k => k.indexOf(STORE) === 0).forEach(k => localStorage.removeItem(k)); localStorage.setItem(key, JSON.stringify(j)); } catch (e2) {} }
+    hideBanner(); render(j);
   } catch (err) {
     const why = err.name === 'AbortError' ? 'Google took too long to answer' : (err.message || String(err));
-    if (cached) showBanner('Couldn’t reach Google just now (' + esc(why) + '). Showing the last numbers this browser saw.');
-    else { showBanner('Couldn’t load the searches: ' + esc(why) + '. Showing <b>sample numbers</b> until it works.'); render(demoData()); }
-  }
+    if (cached) banner('Couldn’t refresh from Google (' + esc(why) + '). Showing the last numbers this browser saw.');
+    else { banner('Couldn’t load Search Console: ' + esc(why) + '. Showing <b>sample numbers</b>.'); render(demo(current)); }
+  } finally { $('loading').classList.remove('on'); }
 }
-function showBanner(html){ const b = $('banner'); b.innerHTML = html; b.classList.add('on'); }
+function banner(h){ $('banner').innerHTML = h; $('banner').classList.add('on'); }
 function hideBanner(){ $('banner').classList.remove('on'); }
 
 /* =========================================================
    RENDER
 ========================================================= */
-let DATA = null;
+let D = null, metric = 1;
 function render(d){
-  DATA = d;
-  const rows = d.queries || [];
-  const t = d.totals;
-  document.title = 'Google searches · ' + CONFIG.clientName;
-  $('clientName').textContent = CONFIG.clientName;
-  $('monthLabel').textContent = d.range.label;
-  $('rangeLabel').textContent = niceDate(d.range.start) + ' to ' + niceDate(d.range.end);
+  D = d;
+  const t = d.totals, pv = d.previous ? d.previous.totals : null;
+  document.title = 'Organic Search Queries · ' + CONFIG.clientName;
+  $('sub').textContent = CONFIG.clientName + ' · ' + d.range.label;
+  $('vs').textContent = d.previous ? 'Compared to ' + d.previous.range.label : '';
+  if (current.key === 'custom') $('dateLabel').textContent = d.range.label;
 
-  const clickedCount = rows.filter(r => r[1] > 0).length;
-  $('lede').innerHTML = 'In <b>' + esc(d.range.label) + '</b>, Google sent <b>' + fmt(t.clicks) + ' visits</b> to ' + esc(CONFIG.clientName) +
-    ' from <b>' + fmt(t.queries) + ' different searches</b> we can see. ' + fmt(clickedCount) + ' of those searches led to at least one visit.';
-  const hcl = d.hidden ? d.hidden.clicks : 0;
-  const pv = $('privacy');
-  if (hcl > 0 && t.clicks > 0) {
-    const shownClicks = Math.max(0, t.clicks - hcl);
-    pv.style.display = '';
-    pv.innerHTML = '<div class="pv-text"><b>Why the searches below add up to fewer visits.</b> Google hides the exact words of rare, one-off searches to protect people’s privacy. ' +
-      'Last month that was <b>' + fmt(hcl) + ' of ' + fmt(t.clicks) + ' visits</b>. The lists below cover the other ' + fmt(shownClicks) + ', which are the searches people make most often.</div>' +
-      '<div class="pv-bar" title="' + fmtPct(shownClicks / t.clicks * 100) + ' of visits have visible search words"><div style="width:' + (shownClicks / t.clicks * 100) + '%"></div></div>' +
-      '<div class="pv-legend"><span><i style="background:var(--c1)"></i>Search words visible · ' + fmt(shownClicks) + '</span><span><i style="background:var(--rule)"></i>Kept private by Google · ' + fmt(hcl) + '</span></div>';
-  } else pv.style.display = 'none';
+  $('kClicks').textContent = fmt(t.clicks);
+  $('kImpr').textContent = fmt(t.impressions);
+  $('kCtr').innerHTML = fmt1(t.ctr) + '<small>%</small>';
+  $('kPos').textContent = fmt1(t.position);
+  delta('dClicks', t.clicks, pv && pv.clicks, false, fmt);
+  delta('dImpr', t.impressions, pv && pv.impressions, false, fmt);
+  delta('dCtr', t.ctr, pv && pv.ctr, false, v => fmt1(v) + '%');
+  delta('dPos', t.position, pv && pv.position, true, fmt1);
 
-  $('tClicks').textContent = fmt(t.clicks);
-  $('tImpr').textContent = fmt(t.impressions);
-  $('tQueries').textContent = fmt(t.queries);
-  $('tPos').textContent = t.position.toFixed(1);
-  $('tPosNote').textContent = (t.position <= 10 ? 'On page one, on average. ' : 'Past page one, on average. ') + '1 is the very top result.';
-
-  drawTrend(d.daily || []);
-  topSearches(rows);
-  kinds(rows);
-  opportunities(rows);
-  bars('topPages', (d.pages || []).slice().sort((a, b) => b[1] - a[1]).slice(0, 8).map(p => [shortPath(p[0]), p[1], p[0]]), 'visits', true);
-  devices(d.devices || []);
-  bars('countries', (d.countries || []).slice().sort((a, b) => b[1] - a[1]).slice(0, 5).map(c => [countryName(c[0]), c[1]]), 'visits');
-
-  $('hiddenNote').textContent = '';
+  privacy(d);
+  drawTrend();
+  bars('topQ', (d.queries || []).filter(r => r[1] > 0).sort((a, b) => b[1] - a[1] || b[2] - a[2]).slice(0, 8).map(r => [r[0], r[1]]));
+  brandDonut(d.queries || []);
+  devDonut(d.devices || []);
+  bars('countries', (d.countries || []).slice().sort((a, b) => b[1] - a[1]).slice(0, 6).map(c => [country(c[0]), c[1]]));
+  opportunities(d.queries || [], t);
+  pagesTable(d.pages || []);
   table.reset();
 }
-function niceDate(s){ const [y, m, dd] = s.split('-').map(Number); return new Date(y, m - 1, dd).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }); }
 
-/* Day-by-day line ------------------------------------------------ */
-function drawTrend(daily){
+function delta(id, cur, prev, lowerIsBetter, f){
+  const el = $(id);
+  if (prev == null || !D.previous){ el.innerHTML = ''; return; }
+  if (!prev){ el.className = 'delta'; el.innerHTML = '<span class="was">' + esc(D.previous.range.label) + ': ' + f(prev) + '</span>'; return; }
+  const ch = (cur - prev) / prev * 100;
+  const good = lowerIsBetter ? ch < 0 : ch > 0;
+  const flat = Math.abs(ch) < 0.5;
+  el.className = 'delta ' + (flat ? '' : good ? 'up' : 'down');
+  el.innerHTML = (flat ? '–' : (ch > 0 ? '▲' : '▼')) + ' ' + Math.abs(Math.round(ch)) + '% <span class="was">vs ' + f(prev) + '</span>';
+}
+
+function privacy(d){
+  const el = $('priv'); const total = d.totals.clicks, hid = d.hidden ? d.hidden.clicks : 0;
+  if (!total || !hid){ el.style.display = 'none'; return; }
+  const vis = Math.max(0, total - hid), pc = vis / total * 100;
+  el.style.display = '';
+  el.innerHTML = '<div><b>About the query lists below.</b> Google hides the exact words of rare, one-off searches to protect privacy. ' +
+    'The lists cover <b>' + fmt(vis) + ' of ' + fmt(total) + ' clicks</b>; the other ' + fmt(hid) + ' came from searches Google keeps private.</div>' +
+    '<div><div class="ptrack" title="' + Math.round(pc) + '% of clicks have visible search words"><i style="width:' + pc + '%"></i></div>' +
+    '<div class="plegend"><span>Visible ' + fmt(vis) + '</span><span>Private ' + fmt(hid) + '</span></div></div>';
+}
+
+/* Smooth black line, AgencyAnalytics style --------------------------- */
+function drawTrend(){
   const el = $('trend');
-  const pts = daily.slice().sort((a, b) => a[0] < b[0] ? -1 : 1);
-  if (!pts.length) { el.innerHTML = '<div class="empty">No daily numbers for this month yet.</div>'; return; }
-  const W = 1100, H = 260, L = 44, R = 12, T = 14, B = 30;
-  const max = Math.max(1, ...pts.map(p => p[1]));
-  const nice = niceMax(max);
+  const pts = (D.daily || []).slice().sort((a, b) => a[0] < b[0] ? -1 : 1);
+  $('trendTitle').textContent = metric === 1 ? 'Clicks' : 'Impressions';
+  $('trendTotal').textContent = fmt(metric === 1 ? D.totals.clicks : D.totals.impressions);
+  if (!pts.length){ el.innerHTML = '<div class="empty">No daily numbers for this period.</div>'; return; }
+  const W = 760, H = 300, L = 40, R = 10, T = 12, B = 28;
+  const vals = pts.map(p => p[metric]);
+  const nice = niceMax(Math.max(1, ...vals));
   const x = i => L + (pts.length === 1 ? (W - L - R) / 2 : i * (W - L - R) / (pts.length - 1));
   const y = v => T + (H - T - B) * (1 - v / nice);
   let g = '';
-  for (let k = 0; k <= 4; k++) { const v = nice * k / 4; g += '<line class="grid-line" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '"/><text x="' + (L - 8) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + fmt(v) + '</text>'; }
-  let xl = '';
-  pts.forEach((p, i) => { const day = Number(p[0].slice(8)); if (i === pts.length - 1 || ((day === 1 || day % 7 === 1) && i < pts.length - 4)) xl += '<text x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle">' + niceDate(p[0]).replace(/, \d{4}$/, '') + '</text>'; });
-  const line = pts.map((p, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(p[1]).toFixed(1)).join(' ');
-  const area = line + ' L' + x(pts.length - 1) + ' ' + y(0) + ' L' + x(0) + ' ' + y(0) + ' Z';
-  const best = pts.reduce((a, p, i) => p[1] > pts[a][1] ? i : a, 0);
-  el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Daily visits from Google">' +
-    '<defs><linearGradient id="ga" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--c1)" stop-opacity=".22"/><stop offset="1" stop-color="var(--c1)" stop-opacity="0"/></linearGradient></defs>' +
-    '<g class="axis">' + g + xl + '</g>' +
-    '<path d="' + area + '" fill="url(#ga)"/>' +
-    '<path d="' + line + '" fill="none" stroke="var(--c1)" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"/>' +
-    '<circle cx="' + x(best) + '" cy="' + y(pts[best][1]) + '" r="4.5" fill="var(--c1)" stroke="var(--card)" stroke-width="2"/>' +
-    '<text x="' + Math.min(W - R - 4, Math.max(L + 4, x(best))) + '" y="' + (y(pts[best][1]) - 10) + '" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ink)">Best day · ' + fmt(pts[best][1]) + '</text>' +
-    '<line id="hx" y1="' + T + '" y2="' + y(0) + '" stroke="var(--ink-3)" stroke-dasharray="3 3" opacity="0"/>' +
-    '<circle id="hd" r="5" fill="var(--c1)" stroke="var(--card)" stroke-width="2" opacity="0"/>' +
-    '<rect x="' + L + '" y="0" width="' + (W - L - R) + '" height="' + H + '" fill="transparent" id="hit"/></svg><div class="tip" id="tip"></div>';
+  for (let k = 0; k <= 5; k++){ const v = nice * k / 5; g += '<line class="gl" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '"/><text class="ax" x="' + (L - 8) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + fmt(v) + '</text>'; }
+  const step = Math.max(1, Math.ceil(pts.length / 14));
+  let xl = ''; pts.forEach((p, i) => { if (i % step === 0) xl += '<text class="ax" x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle">' + shortDay(p[0]) + '</text>'; });
+  const Q = pts.map((p, i) => [x(i), y(p[metric])]);
+  let dpath = 'M' + Q[0][0] + ' ' + Q[0][1];
+  for (let i = 0; i < Q.length - 1; i++){
+    const p0 = Q[i - 1] || Q[i], p1 = Q[i], p2 = Q[i + 1], p3 = Q[i + 2] || p2;
+    const c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = Math.min(y(0), p1[1] + (p2[1] - p0[1]) / 6), c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = Math.min(y(0), p2[1] - (p3[1] - p1[1]) / 6);
+    dpath += ' C' + c1x.toFixed(1) + ' ' + c1y.toFixed(1) + ' ' + c2x.toFixed(1) + ' ' + c2y.toFixed(1) + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
+  }
+  el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (metric === 1 ? 'Clicks' : 'Impressions') + ' by day">' + g + xl +
+    '<path d="' + dpath + '" fill="none" stroke="var(--bar)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+    '<line id="hx" y1="' + T + '" y2="' + y(0) + '" stroke="#c9ced3" stroke-dasharray="3 3" opacity="0"/>' +
+    '<circle id="hd" r="4.5" fill="var(--bar)" stroke="#fff" stroke-width="2" opacity="0"/>' +
+    '<rect x="' + L + '" y="0" width="' + (W - L - R) + '" height="' + H + '" fill="transparent"/></svg><div class="tip" id="tip"></div>';
   const svg = el.querySelector('svg'), tip = $('tip'), hx = $('hx'), hd = $('hd');
   const move = ev => {
-    const r = svg.getBoundingClientRect(); const px = ((ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left) * W / r.width;
-    const i = Math.max(0, Math.min(pts.length - 1, Math.round((px - L) / ((W - L - R) / Math.max(1, pts.length - 1)))));
+    const r = svg.getBoundingClientRect(); const cx = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left;
+    const px = cx * W / r.width; const i = Math.max(0, Math.min(pts.length - 1, Math.round((px - L) / ((W - L - R) / Math.max(1, pts.length - 1)))));
     const p = pts[i];
     hx.setAttribute('x1', x(i)); hx.setAttribute('x2', x(i)); hx.setAttribute('opacity', 1);
-    hd.setAttribute('cx', x(i)); hd.setAttribute('cy', y(p[1])); hd.setAttribute('opacity', 1);
-    tip.innerHTML = '<b>' + new Date(p[0] + 'T12:00').toLocaleDateString('en-CA', { weekday: 'short', month: 'short', day: 'numeric' }) + '</b><br>' + fmt(p[1]) + ' visits · shown ' + fmt(p[2]) + ' times';
-    tip.style.left = (x(i) * r.width / W) + 'px'; tip.style.top = (y(p[1]) * r.height / H) + 'px'; tip.classList.add('on');
+    hd.setAttribute('cx', x(i)); hd.setAttribute('cy', y(p[metric])); hd.setAttribute('opacity', 1);
+    const [yy, mm, dd] = p[0].split('-').map(Number);
+    tip.innerHTML = '<b>' + MON[mm - 1] + ' ' + dd + ', ' + yy + '</b><br>Clicks: ' + fmt(p[1]) + '<br>Impressions: ' + fmt(p[2]);
+    tip.style.left = (16 + x(i) * (r.width / W)) + 'px'; tip.style.top = (12 + y(p[metric]) * (r.height / H)) + 'px'; tip.classList.add('on');
   };
-  const leave = () => { tip.classList.remove('on'); hx.setAttribute('opacity', 0); hd.setAttribute('opacity', 0); };
   svg.addEventListener('mousemove', move); svg.addEventListener('touchstart', move, { passive: true }); svg.addEventListener('touchmove', move, { passive: true });
-  svg.addEventListener('mouseleave', leave);
-  const total = pts.reduce((s, p) => s + p[1], 0);
-  $('trendNote').textContent = 'About ' + fmt(total / pts.length) + ' visits a day';
+  svg.addEventListener('mouseleave', () => { tip.classList.remove('on'); hx.setAttribute('opacity', 0); hd.setAttribute('opacity', 0); });
 }
 function niceMax(v){ const p = Math.pow(10, Math.floor(Math.log10(v))); const n = v / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p; }
+$('metricSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; metric = Number(b.dataset.m); $('metricSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); drawTrend(); });
 
-/* Bar lists --------------------------------------------------------- */
-function bars(id, items, unit, link){
+/* Bars: black fill on a grey pill track ------------------------------ */
+function bars(id, items){
   const el = $(id);
-  if (!items.length) { el.innerHTML = '<div class="empty">Nothing to show for this month.</div>'; return; }
+  if (!items.length){ el.innerHTML = '<div class="empty">Nothing to show for this period.</div>'; return; }
   const max = Math.max(1, ...items.map(i => i[1]));
-  el.innerHTML = items.map((it, k) =>
-    '<div class="bar-row" title="' + esc(it[2] || it[0]) + ': ' + fmt(it[1]) + ' ' + unit + '"><div style="min-width:0"><div class="name">' +
-    (id === 'topSearches' ? '<span class="rank">' + (k + 1) + '</span>' : '') +
-    (link && it[2] ? '<a href="' + esc(it[2]) + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">' + esc(it[0]) + '</a>' : esc(it[0])) +
-    '</div><div class="bar-track"><div class="bar-fill" style="width:' + (it[1] / max * 100) + '%"></div></div></div><div class="v num">' + fmt(it[1]) + '</div></div>'
-  ).join('');
-}
-function topSearches(rows){
-  const top = rows.filter(r => r[1] > 0).sort((a, b) => b[1] - a[1] || b[2] - a[2]).slice(0, 10).map(r => [r[0], r[1]]);
-  bars('topSearches', top, 'visits');
+  el.innerHTML = items.map(it => '<div class="bar" title="' + esc(it[0]) + ': ' + fmt(it[1]) + '"><div class="row"><span>' + esc(it[0]) + '</span><span class="num">' + fmt(it[1]) + '</span></div><div class="track"><i style="width:' + (it[1] / max * 100) + '%"></i></div></div>').join('');
 }
 
-/* Split bars -------------------------------------------------------- */
-function split(barId, legId, parts){
-  const total = parts.reduce((s, p) => s + p.v, 0) || 1;
-  $(barId).innerHTML = parts.filter(p => p.v > 0).map(p => '<div title="' + esc(p.label) + ': ' + fmtPct(p.v / total * 100) + '" style="width:' + (p.v / total * 100) + '%;background:' + p.c + '"></div>').join('') || '<div style="width:100%;background:var(--rule-soft)"></div>';
-  $(legId).innerHTML = parts.map(p => '<div class="leg"><span class="sw" style="background:' + p.c + '"></span><span>' + esc(p.label) + '</span><span class="pct num">' + fmtPct(p.v / total * 100) + '</span><span class="cnt num">' + fmt(p.v) + ' visits</span></div>').join('');
+/* Donut, AgencyAnalytics colours ------------------------------------- */
+function donut(id, parts, centerLabel){
+  const el = $(id), total = parts.reduce((s, p) => s + p.v, 0);
+  if (!total){ el.innerHTML = '<div class="empty">No clicks in this period.</div>'; return; }
+  const R = 70, C = 90, sw = 22, circ = 2 * Math.PI * R; let off = 0, segs = '';
+  const live = parts.filter(p => p.v > 0);
+  live.forEach(p => {
+    const len = p.v / total * circ, gap = live.length > 1 ? 1.5 : 0, dl = Math.max(0, len - gap);
+    segs += '<circle cx="' + C + '" cy="' + C + '" r="' + R + '" fill="none" stroke="' + p.c + '" stroke-width="' + sw + '" stroke-dasharray="' + dl + ' ' + (circ - dl) + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 ' + C + ' ' + C + ')"><title>' + esc(p.label) + ': ' + fmt(p.v) + '</title></circle>';
+    off += len;
+  });
+  el.innerHTML = '<svg viewBox="0 0 180 180" role="img" aria-label="' + esc(centerLabel) + '">' + segs +
+    '<text class="dc1" x="90" y="92" text-anchor="middle">' + fmt(total) + '</text><text class="dc2" x="90" y="110" text-anchor="middle">' + esc(centerLabel) + '</text></svg>' +
+    '<div class="dl">' + parts.map(p => '<div><i style="background:' + p.c + '"></i>' + esc(p.label) + '<b class="num">' + fmt(p.v) + '</b></div>').join('') + '</div>';
 }
-function kinds(rows){
-  let brand = 0, topic = 0;
-  rows.forEach(r => { if (isBrand(r[0])) brand += r[1]; else topic += r[1]; });
-  split('brandSplit', 'brandLegend', [
-    { label: 'Searched your name', v: brand, c: 'var(--c1)' },
-    { label: 'Searched a topic', v: topic, c: 'var(--c2)' },
-  ]);
-  const qs = rows.filter(r => isQuestion(r[0]));
-  const qTop = qs.slice().sort((a, b) => b[2] - a[2]).slice(0, 4);
-  $('questionStat').innerHTML = '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px"><span style="font-family:var(--display);font-size:30px" class="num">' + fmt(qs.length) +
-    '</span><span class="muted small">question searches, ' + fmt(qs.reduce((s, r) => s + r[1], 0)) + ' visits</span></div>' +
-    (qTop.length ? '<div class="small" style="color:var(--ink-2)">' + qTop.map(r => '“' + esc(r[0]) + '”').join('<br>') + '</div>' : '<div class="empty">No question searches this month.</div>');
+function brandDonut(rows){
+  let b = 0, n = 0; rows.forEach(r => { if (isBrand(r[0])) b += r[1]; else n += r[1]; });
+  donut('brandDonut', [{ label: 'Branded', v: b, c: 'var(--blue)' }, { label: 'Non-branded', v: n, c: 'var(--lime)' }], 'Clicks');
 }
-function devices(list){
+function devDonut(list){
   const get = k => { const r = list.find(d => String(d[0]).toUpperCase() === k); return r ? r[1] : 0; };
-  split('deviceSplit', 'deviceLegend', [
-    { label: 'Phone', v: get('MOBILE'), c: 'var(--c1)' },
-    { label: 'Computer', v: get('DESKTOP'), c: 'var(--c2)' },
-    { label: 'Tablet', v: get('TABLET'), c: 'var(--c3)' },
-  ]);
+  donut('devDonut', [{ label: 'Desktop', v: get('DESKTOP'), c: 'var(--blue)' }, { label: 'Mobile', v: get('MOBILE'), c: 'var(--lime)' }, { label: 'Tablet', v: get('TABLET'), c: 'var(--amber)' }], 'Total Clicks');
 }
 
-/* Opportunities ----------------------------------------------------- */
-function opportunities(rows){
-  const near = rows.filter(isNear).sort((a, b) => b[2] - a[2]).slice(0, 6);
-  $('nearTop').innerHTML = near.length ? near.map(r =>
-    '<div class="opp"><span class="q">' + esc(r[0]) + '</span>' + spot(r[4]) +
-    '<span class="meta">Shown ' + fmt(r[2]) + ' times · ' + fmt(r[1]) + ' visits' + (r[5] ? ' · ' + esc(shortPath(r[5])) : '') + '</span></div>').join('')
-    : '<div class="empty">No searches sitting just below the top this month.</div>';
-  const avgCtr = DATA.totals.ctr || 1;
-  const low = rows.filter(r => r[2] >= 20 && r[3] < Math.max(1, avgCtr / 2) && !near.includes(r)).sort((a, b) => b[2] - a[2]).slice(0, 6);
-  $('lowClick').innerHTML = low.length ? low.map(r =>
-    '<div class="opp"><span class="q">' + esc(r[0]) + '</span>' + spot(r[4]) +
-    '<span class="meta">Shown ' + fmt(r[2]) + ' times · only ' + fmt(r[1]) + ' visits (' + fmtPct(r[3]) + ')' + (r[5] ? ' · ' + esc(shortPath(r[5])) : '') + '</span></div>').join('')
-    : '<div class="empty">Nothing stands out. Searches that show the site are getting clicked.</div>';
+/* Tables ------------------------------------------------------------- */
+function simpleTable(id, head, rows, emptyMsg){
+  const el = $(id);
+  if (!rows.length){ el.innerHTML = '<tbody><tr><td class="empty">' + emptyMsg + '</td></tr></tbody>'; return; }
+  el.innerHTML = '<thead><tr>' + head.map(h => '<th class="' + (h[1] || '') + '" style="cursor:default">' + h[0] + '</th>').join('') + '</tr></thead><tbody>' + rows.join('') + '</tbody>';
+}
+function opportunities(rows, t){
+  const near = rows.filter(isNear).sort((a, b) => b[2] - a[2]).slice(0, 8);
+  simpleTable('nearTbl', [['Query'], ['Impressions', 'r'], ['Clicks', 'r'], ['Position', 'r']],
+    near.map(r => '<tr><td class="q">' + esc(r[0]) + '</td><td class="r num">' + fmt(r[2]) + '</td><td class="r num">' + fmt(r[1]) + '</td><td class="r num">' + fmt1(r[4]) + '</td></tr>'),
+    'No searches sitting just below the top in this period.');
+  const avg = t.ctr || 1;
+  const low = rows.filter(r => r[2] >= 30 && r[3] < Math.max(0.5, avg / 2) && !near.includes(r)).sort((a, b) => b[2] - a[2]).slice(0, 8);
+  simpleTable('lowTbl', [['Query'], ['Impressions', 'r'], ['Clicks', 'r'], ['CTR', 'r']],
+    low.map(r => '<tr><td class="q">' + esc(r[0]) + '</td><td class="r num">' + fmt(r[2]) + '</td><td class="r num">' + fmt(r[1]) + '</td><td class="r num">' + fmt1(r[3]) + '%</td></tr>'),
+    'Nothing stands out. Searches that show the site are getting clicked.');
+}
+function pagesTable(pages){
+  const top = pages.slice().sort((a, b) => b[1] - a[1] || b[2] - a[2]).slice(0, 10);
+  simpleTable('pagesTbl', [['Page'], ['Clicks', 'r'], ['Impressions', 'r'], ['CTR', 'r hide-sm'], ['Position', 'r hide-sm']],
+    top.map(p => '<tr><td class="q"><a href="' + esc(p[0]) + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-decoration-color:#d4d8dc">' + esc(path(p[0])) + '</a></td><td class="r num">' + fmt(p[1]) + '</td><td class="r num">' + fmt(p[2]) + '</td><td class="r num hide-sm">' + fmt1(p[3]) + '%</td><td class="r num hide-sm">' + fmt1(p[4]) + '</td></tr>'),
+    'No landing pages for this period.');
 }
 
-/* Table ------------------------------------------------------------- */
 const table = (() => {
-  let sortK = 1, dir = -1, filter = 'all', term = '', shown = 50, list = [];
+  const PER = 25; let sortK = 1, dir = -1, filter = 'all', term = '', page = 0, list = [];
   const tests = { all: () => true, clicked: r => r[1] > 0, brand: r => isBrand(r[0]), topic: r => !isBrand(r[0]), question: r => isQuestion(r[0]), near: isNear };
+  const cols = [['Query', 0, ''], ['Clicks', 1, 'r'], ['Impressions', 2, 'r'], ['CTR', 3, 'r hide-sm'], ['Position', 4, 'r'], ['Landing Page', 5, 'hide-sm']];
   function compute(){
-    const t = term.toLowerCase();
-    list = (DATA.queries || []).filter(r => tests[filter](r) && (!t || r[0].toLowerCase().includes(t)));
+    const q = term.toLowerCase();
+    list = (D.queries || []).filter(r => tests[filter](r) && (!q || r[0].toLowerCase().includes(q)));
     list.sort((a, b) => { const x = a[sortK], y = b[sortK]; return (typeof x === 'string' ? x.localeCompare(y) : x - y) * dir || b[2] - a[2]; });
   }
   function draw(){
-    const max = Math.max(1, ...list.slice(0, 200).map(r => r[1]));
-    $('rows').innerHTML = list.slice(0, shown).map(r =>
-      '<tr><td class="q">' + esc(r[0]) + '</td><td class="r num"><span class="mini" style="width:' + Math.round(r[1] / max * 40) + 'px"></span>' + fmt(r[1]) +
-      '</td><td class="r num">' + fmt(r[2]) + '</td><td class="r num hide-sm">' + fmtPct(r[3]) + '</td><td class="r">' + spot(r[4]) +
-      '</td><td class="page hide-sm">' + (r[5] ? '<a href="' + esc(r[5]) + '" target="_blank" rel="noopener">' + esc(shortPath(r[5])) + '</a>' : '<span class="muted">—</span>') + '</td></tr>'
-    ).join('') || '<tr><td colspan="6" class="empty" style="padding:18px">No searches match that.</td></tr>';
-    $('countLine').textContent = 'Showing ' + fmt(Math.min(shown, list.length)) + ' of ' + fmt(list.length);
-    $('more').style.display = list.length > shown ? 'block' : 'none';
-    document.querySelectorAll('th').forEach(th => { const on = Number(th.dataset.k) === sortK; th.classList.toggle('sorted', on); th.querySelector('.arr').textContent = on ? (dir < 0 ? '↓' : '↑') : '↕'; });
+    const el = $('allTbl');
+    el.innerHTML = '<thead><tr>' + cols.map(c => '<th class="' + c[2] + (c[1] === sortK ? ' s' : '') + '" data-k="' + c[1] + '">' + c[0] + '<span class="a">' + (c[1] === sortK ? (dir < 0 ? '▼' : '▲') : '▾') + '</span></th>').join('') + '</tr></thead><tbody>' +
+      (list.slice(page * PER, page * PER + PER).map(r => '<tr><td class="q">' + esc(r[0]) + '</td><td class="r num">' + fmt(r[1]) + '</td><td class="r num">' + fmt(r[2]) + '</td><td class="r num hide-sm">' + fmt1(r[3]) + '%</td><td class="r num">' + fmt1(r[4]) + '</td><td class="pg hide-sm">' + (r[5] ? '<a href="' + esc(r[5]) + '" target="_blank" rel="noopener">' + esc(path(r[5])) + '</a>' : '—') + '</td></tr>').join('') || '<tr><td colspan="6" class="empty">No queries match.</td></tr>') + '</tbody>';
+    el.querySelectorAll('th').forEach(th => th.addEventListener('click', () => {
+      const k = Number(th.dataset.k); if (k === sortK) dir = -dir; else { sortK = k; dir = (k === 0 || k === 4 || k === 5) ? 1 : -1; }
+      page = 0; compute(); draw();
+    }));
+    const a = list.length ? page * PER + 1 : 0, b = Math.min(list.length, page * PER + PER);
+    $('pageInfo').textContent = 'Showing ' + fmt(a) + '–' + fmt(b) + ' of ' + fmt(list.length) + ' rows';
+    $('allCount').textContent = fmt((D.queries || []).length) + ' queries';
+    $('prev').disabled = page === 0; $('next').disabled = b >= list.length;
   }
-  document.querySelectorAll('th').forEach(th => th.addEventListener('click', () => {
-    const k = Number(th.dataset.k); if (k === sortK) dir = -dir; else { sortK = k; dir = (k === 0 || k === 4 || k === 5) ? 1 : -1; }
-    shown = 50; compute(); draw();
-  }));
-  $('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; filter = b.dataset.f; document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b)); shown = 50; compute(); draw(); });
-  let deb; $('q').addEventListener('input', e => { clearTimeout(deb); deb = setTimeout(() => { term = e.target.value.trim(); shown = 50; compute(); draw(); }, 120); });
-  $('more').addEventListener('click', () => { shown += 50; draw(); });
+  $('fchips').addEventListener('click', e => { const b = e.target.closest('.fchip'); if (!b) return; filter = b.dataset.f; document.querySelectorAll('.fchip').forEach(c => c.classList.toggle('on', c === b)); page = 0; compute(); draw(); });
+  let deb; $('q').addEventListener('input', e => { clearTimeout(deb); deb = setTimeout(() => { term = e.target.value.trim(); page = 0; compute(); draw(); }, 120); });
+  $('prev').addEventListener('click', () => { if (page > 0){ page--; draw(); } });
+  $('next').addEventListener('click', () => { if ((page + 1) * PER < list.length){ page++; draw(); } });
   $('csv').addEventListener('click', () => {
     const cell = v => { const s = String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
-    const lines = [['Search', 'Visits', 'Times shown', 'Click rate %', 'Average Google position', 'Landed on'].join(',')].concat(list.map(r => r.map(cell).join(',')));
+    const lines = [['Query', 'Clicks', 'Impressions', 'CTR %', 'Average position', 'Landing page'].join(',')].concat(list.map(r => r.map(cell).join(',')));
     const blob = new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = CONFIG.domain.replace(/\W+/g, '-') + '-google-searches-' + DATA.range.start.slice(0, 7) + '.csv';
+    a.download = CONFIG.domain.replace(/\W+/g, '-') + '-search-queries-' + D.range.start + '-to-' + D.range.end + '.csv';
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   });
-  return { reset(){ shown = 50; compute(); draw(); } };
+  return { reset(){ page = 0; compute(); draw(); } };
 })();
 
-$('refresh').addEventListener('click', () => load(true));
-
 /* =========================================================
-   SAMPLE NUMBERS (only when the link isn't connected)
+   SAMPLE NUMBERS (only when not connected)
 ========================================================= */
-function demoData(){
-  const now = new Date(); const y = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear(); const m = now.getMonth() === 0 ? 12 : now.getMonth();
-  const days = new Date(y, m, 0).getDate(); const mm = String(m).padStart(2, '0');
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function demo(r){
   let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-  const base = [['jigsaw learning',140,620,1.4],['jigsaw learning calgary',38,210,1.6],['jigsaw learning login',22,90,1.2],['corporate training programs',18,1450,8.4],
-    ['leadership training alberta',15,980,6.2],['how to build a learning pathway',9,760,11.3],['online course design services',8,1300,14.8],['jigsaw learning reviews',7,60,2.1],
-    ['what is a learning management system',6,2100,17.9],['instructional design company canada',6,540,7.7],['employee onboarding training',5,880,12.6],['microlearning examples',4,1200,18.5],
-    ['soft skills training for employees',4,640,9.8],['elearning development edmonton',4,180,3.9],['why is workplace training important',3,920,22.4],['custom elearning',3,410,10.2],
-    ['training needs analysis template',2,1500,24.6],['can you outsource training',1,120,9.1],['blended learning model',1,980,31.5],['compliance training canada',1,350,16.2]];
-  const queries = base.map(b => [b[0], b[1], b[2], Math.round(b[1] / b[2] * 1000) / 10, b[3], 'https://jigsawlearning.ca/' + (b[0].includes('jigsaw') ? '' : b[0].split(' ').slice(0, 2).join('-') + '/')]);
-  for (let i = 0; i < 160; i++) { const imp = Math.round(rnd() * 90) + 3; const c = rnd() > .8 ? 1 : 0; queries.push(['sample search ' + (i + 1), c, imp, Math.round(c / imp * 1000) / 10, Math.round((4 + rnd() * 50) * 10) / 10, '']); }
-  const clicks = queries.reduce((s, r) => s + r[1], 0), impr = queries.reduce((s, r) => s + r[2], 0);
-  const daily = []; for (let d = 1; d <= days; d++) { const wk = new Date(y, m - 1, d).getDay(); const f = (wk === 0 || wk === 6) ? .55 : 1.15; daily.push([y + '-' + mm + '-' + String(d).padStart(2, '0'), Math.round(clicks / days * f * (.8 + rnd() * .4)), Math.round(impr / days * f * (.85 + rnd() * .3))]); }
+  const days = []; for (let d = r.start; d <= r.end; d = addDays(d, 1)) days.push(d);
+  const base = [['jigsaw learning',105,594,3.7],['collaborative response',31,880,6.2],['collaborative response model',16,640,7.1],['jigsaw learning llc',5,40,1.2],['student support plan',4,520,9.8],['locus of control',1,1218,9.0],['meeting organizer',0,502,8.3],['team norms',0,754,28.3],['what are intervention strategies',1,268,17.9],['indra’s net',1,345,7.3],['collaborative team meeting',3,410,10.2],['implementation dip',3,380,12.6]];
+  const queries = base.map(b => [b[0], b[1], b[2], Math.round(b[1] / b[2] * 1000) / 10, b[3], 'https://www.jigsawlearning.ca/' + (b[0].includes('jigsaw') ? '' : b[0].replace(/\W+/g, '-') + '/')]);
+  for (let i = 0; i < 120; i++){ const imp = Math.round(rnd() * 90) + 3; const c = rnd() > .85 ? 1 : 0; queries.push(['sample search ' + (i + 1), c, imp, Math.round(c / imp * 1000) / 10, Math.round((4 + rnd() * 50) * 10) / 10, '']); }
+  const qc = queries.reduce((s, q) => s + q[1], 0), qi = queries.reduce((s, q) => s + q[2], 0);
+  const clicks = qc * 3, impr = qi * 2;
+  const daily = days.map(d => { const wk = new Date(d + 'T12:00:00Z').getUTCDay(); const f = (wk === 0 || wk === 6) ? .5 : 1.15; return [d, Math.round(clicks / days.length * f * (.75 + rnd() * .5)), Math.round(impr / days.length * f * (.8 + rnd() * .4))]; });
+  const label = r.key === 'lastMonth' ? (() => { const [y, m] = r.start.split('-').map(Number); return MONTH[m - 1] + ' ' + y; })() : shortDay(r.start) + ' – ' + shortDay(r.end);
   return {
-    range: { start: y + '-' + mm + '-01', end: y + '-' + mm + '-' + days, label: months[m - 1] + ' ' + y },
-    totals: { clicks: clicks + 40, impressions: impr + 900, ctr: Math.round(clicks / impr * 1000) / 10, position: 12.4, queries: queries.length },
-    hidden: { clicks: 40, impressions: 900 }, queries, daily,
-    devices: [['MOBILE', Math.round(clicks * .58)], ['DESKTOP', Math.round(clicks * .38)], ['TABLET', Math.round(clicks * .04)]],
-    countries: [['can', Math.round(clicks * .82)], ['usa', Math.round(clicks * .09)], ['ind', Math.round(clicks * .03)], ['gbr', 6], ['phl', 4]],
-    pages: [['https://jigsawlearning.ca/', 190], ['https://jigsawlearning.ca/services/', 44], ['https://jigsawlearning.ca/leadership-training/', 21], ['https://jigsawlearning.ca/blog/learning-pathways/', 12], ['https://jigsawlearning.ca/contact/', 9]],
+    range: { start: r.start, end: r.end, label }, previous: { range: { label: 'previous period' }, totals: { clicks: Math.round(clicks * .86), impressions: Math.round(impr * 1.04), ctr: 1.4, position: 10.6 } },
+    totals: { clicks, impressions: impr, ctr: Math.round(clicks / impr * 1000) / 10, position: 9.9, queries: queries.length },
+    hidden: { clicks: clicks - qc, impressions: impr - qi }, queries, daily,
+    devices: [['DESKTOP', Math.round(clicks * .74)], ['MOBILE', Math.round(clicks * .24)], ['TABLET', Math.round(clicks * .02)]],
+    countries: [['can', Math.round(clicks * .78)], ['usa', Math.round(clicks * .12)], ['ind', 9], ['gbr', 6], ['aus', 4]],
+    pages: [['https://www.jigsawlearning.ca/', 310, 4200, 7.4, 4.1], ['https://www.jigsawlearning.ca/collaborative-response/', 120, 9800, 1.2, 8.8], ['https://www.jigsawlearning.ca/publications/blog-posts/importance-focusing-our-locus-control/', 40, 6100, 0.7, 9.6]],
   };
 }
 
-load(false);
+load();
 </script>
 </body>
 </html>
